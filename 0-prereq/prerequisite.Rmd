@@ -72,4 +72,4 @@ Upload the html output (which should show up in whichever folder you keep the .R
 
 ## Acknowledgements
 
-I have borrowed content heavily from the [!Rstudio website](https://www.rstudio.com/products/rstudio/features/). 
+I have borrowed content heavily from the ![Rstudio website](https://www.rstudio.com/products/rstudio/features/). 
