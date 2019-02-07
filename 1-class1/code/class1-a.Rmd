@@ -1,0 +1,70 @@
+---
+title: "class1-a"
+author: "Sujatha Jagannathan"
+date: "January 16, 2019"
+output: ioslides_presentation
+incremental: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+setwd("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1")
+```
+
+## Learning objectives for this course {.build}
+> The primary learning objectives are to work towards being able to:  
+
+* Retrieve and import genomic data.  
+* Prepare data for analysis (“tidy”-ing).  
+* Conduct basic exploratory analysis - getting familiar with your dataset.  
+* Test specific hypotheses using computational methods.  
+* Visualize and communicate your results.  
+* Practice reproducible analysis.  
+
+## Data Analysis With R 
+
+```{r}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/images/tidy1.png", dpi = 120)
+```
+
+Source: Hadley Wickham
+
+## Data Analysis With R
+```{r}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/images/tidyverse-packages.png", dpi = 240)
+```
+Source: https://ismayc.github.io/poRtland-bootcamp17/slides.html
+
+## Class Organization
+
+- Class 1	Retrieving + Tidying
+- Class 2	Data exploration
+- Class 3	Hypothesis testing
+- Class 4	Visualize/Communicate
+- Class 5	Hypothesis testing
+- Class 6	Visualize/Communicate
+- Class 7	Remediation + Final Projects
+- Class 8	Final Projects
+- Class 9	Final Projects
+
+## Today's class outline
+
+- Coding best practices
+- Review of data types
+- In-class exercises: 
+    + Import a genomic dataset
+    + Get familiar with the data
+    + Tidy the data
+    + Transform the data
+- Homework instructions
+
+## R cheatsheets
+
+Rstudio has cheatsheets for each of the packages - use them!   
+
+* [Rstudio](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)
+* [Rmarkdown](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
+* [Readr & Tidyr](https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf)
+* [dplyr](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)
+* [stringr](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf)
+* [ggplot](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)

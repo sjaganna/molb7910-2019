@@ -1,0 +1,89 @@
+---
+title: "class1-d"
+author: "Sujatha Jagannathan"
+date: "February 6, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Preparing R
+Load packages  
+```{r, include = TRUE}
+library("tidyverse")
+```
+This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.
+
+## 2. Importing data
+1. RNA read counts  
+```{r cars, echo = TRUE}
+count_summary_rna <- read_delim("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/data/count_summary_rna.tsv", 
+                                delim = "\t", 
+                                escape_double = FALSE, 
+                                trim_ws = TRUE, 
+                                skip = 1)
+```
+
+2. Experimental metadata
+```{r}
+experiment_metadata <- read_delim("~/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/experiment-metadata.txt",
+"\t", escape_double = FALSE, trim_ws = TRUE)
+```
+
+## 3. Getting familiar with the data
+
+```{r}
+count_summary_rna #this works well with tbl_df data type. Others could take a LONG time  
+
+# display first six rows of a dataframe
+head(count_summary_rna) 
+
+# display last six rows of a dataframe
+tail(count_summary_rna)  
+```
+
+#### Str and Glimpse
+```{r}
+#Compactly display the internal structure of an R object
+str(count_summary_rna)
+
+#Get A Glimpse Of Your Data
+glimpse(count_summary_rna)
+glimpse(experiment_metadata)
+```
+
+#### Summary
+
+A generic function used to produce result summaries of the results of various model fitting functions.
+```{r}
+summary(count_summary_rna)
+summary(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
+```
+
+#### Table
+Uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels.
+```{r}
+table(experiment_metadata$hour)
+```
+
+## 4. Tidying data
+
+- Rename columns
+- Drop unnecessary columns
+- Spread and gather
+
+#### Renaming columns
+```{r}
+names(count_summary_rna)
+```
+
+#### Renaming columns (cont'd)
+```{r}
+# count_summary_rna <- count_summary_rna %>% rename(`0h_1_RNA_S13_umi.bam`, hour1_rep1)
+```
+
+## 5. Transform data
+
+- Merge with gene_symbols
