@@ -86,4 +86,6 @@ names(count_summary_rna)
 
 ## 5. Transform data
 
-- Merge with gene_symbols
+- `join` to mapt to gene_symbols
+- Split strings
+- 
