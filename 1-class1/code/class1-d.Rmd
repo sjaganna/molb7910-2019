@@ -13,13 +13,20 @@ knitr::opts_chunk$set(echo = TRUE)
 Load packages  
 ```{r, include = TRUE}
 library("tidyverse")
+library("skimr")
+library("here")
 ```
 This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.
+
+Set working directory
+```{r}
+setwd(here)
+```
 
 ## 2. Importing data
 1. RNA read counts  
 ```{r cars, echo = TRUE}
-count_summary_rna <- read_delim("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/data/count_summary_rna.tsv", 
+count_summary_rna <- read_delim("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/count_summary_rna.tsv", 
                                 delim = "\t", 
                                 escape_double = FALSE, 
                                 trim_ws = TRUE, 
@@ -62,6 +69,12 @@ summary(count_summary_rna)
 summary(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
 ```
 
+An alternative to `summary` is `skim`. 
+```{r}
+library(skimr)
+skim(count_summary_rna)
+```
+
 #### Table
 Uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels.
 ```{r}
@@ -70,9 +83,12 @@ table(experiment_metadata$hour)
 
 ## 4. Tidying data
 
-- Rename columns
 - Drop unnecessary columns
-- Spread and gather
+- Rename columns
+- `spread` and `gather`
+```{r echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidyr-verbs.png", dpi = 200)
+```
 
 #### Renaming columns
 ```{r}
@@ -86,6 +102,18 @@ names(count_summary_rna)
 
 ## 5. Transform data
 
-- `join` to mapt to gene_symbols
-- Split strings
-- 
+#### Merging dataframes
+- `join` to map ensembl IDs to gene_symbols
+```{r echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/join.png", dpi = 200)
+```
+
+#### String manipulations
+- `separate` or `str_split` to split strings
+
+#### Data transformation
+- The five verbs of dplyr
+```{r echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/dplyr-verbs.png", dpi = 200)
+```
+- `group_by` then `summarise`

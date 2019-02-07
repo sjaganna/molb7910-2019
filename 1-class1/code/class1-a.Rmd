@@ -8,7 +8,6 @@ incremental: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-setwd("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1")
 ```
 
 ## Learning objectives for this course {.build}
@@ -24,14 +23,14 @@ setwd("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado
 ## Data Analysis With R 
 
 ```{r}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/images/tidy1.png", dpi = 120)
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidy1.png", dpi = 120)
 ```
 
 Source: Hadley Wickham
 
 ## Data Analysis With R
 ```{r}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/2018_MOLB7910/1-class1/images/tidyverse-packages.png", dpi = 240)
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidyverse-packages.png", dpi = 240)
 ```
 Source: https://ismayc.github.io/poRtland-bootcamp17/slides.html
 
@@ -62,6 +61,7 @@ Source: https://ismayc.github.io/poRtland-bootcamp17/slides.html
 
 Rstudio has cheatsheets for each of the packages - use them!   
 
+* [base R](https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf)
 * [Rstudio](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)
 * [Rmarkdown](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
 * [Readr & Tidyr](https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf)

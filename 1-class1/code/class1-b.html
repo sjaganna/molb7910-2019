@@ -210,13 +210,19 @@ utility_functions.R
 fit models.R
 foo.r
 stuff.r</code></pre>
-<p>If files should be run in a particular order, prefix them with numbers. If it seems likely you’ll have more than 10 files, left pad with zero:</p>
+<p>If files should be run in a particular order, prefix them with numbers. If it seems likely you’ll have more than 10 files, left pad with zero. It looks nice (constant width) and sorts nicely.</p>
 <pre><code>00_download.R
 01_explore.R
 ...
 09_model.R
 10_visualize.R</code></pre>
 <p>Avoid capitalizing when not necessary.</p>
+<p>If you want to include dates in your file name, use the ISO 8601 standard: <code>YYYY-MM-DD</code></p>
+<p>Use delimiters intentionally! (helps you to recover metadata easily from file names)</p>
+<pre><code>&quot;_&quot; delimits fields
+&quot;-&quot; delimits words
+
+Example: 2019-02-15_class1_data-wrangling.Rmd</code></pre>
 </div>
 <div id="organisation" class="section level4">
 <h4>Organisation</h4>

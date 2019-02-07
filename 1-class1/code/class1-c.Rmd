@@ -179,3 +179,7 @@ x <- c(1L,2L,3L)
 x
 class(x)
 ```
+
+## Acknowledgements
+
+The material for this class was heavily borrowed from: http://adv-r.had.co.nz/
