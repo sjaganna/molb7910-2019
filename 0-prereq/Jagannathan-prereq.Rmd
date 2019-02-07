@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library("tidyverse")
 library("rmarkdown")
-sessionInfo()
 ```
 
 ## R Markdown
@@ -31,3 +30,9 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Finally, __always__ print out your R session information at the end of your code using the `sessionInfo()` function. This is really important for reproducibility and troubleshooting.
+
+```{r session info}
+sessionInfo()
+```
