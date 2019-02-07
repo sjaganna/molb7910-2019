@@ -1,0 +1,115 @@
+---
+title: "class1"
+author: "Sujatha Jagannathan"
+date: "January 16, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Learning objectives for this course
+The primary learning objectives are therefore to work towards being able to:
+- Retrieve and import genomic data.
+- Prepare data for analysis (“tidy”-ing).
+- Conduct basic exploratory analysis - getting familiar with your dataset.
+- Test specific hypotheses using computational methods.
+- Visualize and communicate your results.
+- Practice reproducible analysis.
+
+## Data Analysis With R
+
+![](tidy1.png){width=70%} 
+
+## Data Analysis With R
+
+![](tidyverse-packages.png){width=70%} 
+
+Source: https://ismayc.github.io/poRtland-bootcamp17/slides.html
+
+## Class Organization
+Class 1	Retrieving + Tidying
+Class 2	Data exploration
+Class 3	Hypothesis testing
+Class 4	Visualize/Communicate
+Class 5	Hypothesis testing
+Class 6	Visualize/Communicate
+Class 7	Remediation + Final Projects
+Class 8	Final Projects
+Class 9	Final Projects
+
+## Today's class outline
+
+- Coding best practices
+- Review of data types
+- In-class exercises: 
+  + Import a genomic dataset
+  + Understand the data
+  + Tidy the data
+  + Transform the data
+- Homework instructions
+
+## Preparing R
+
+- Load packages
+```{r}
+library("tidyverse")
+```
+This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats. 
+
+## Importing data
+1. RNA read counts
+```{r cars, echo = TRUE}
+count_summary_rna <- read_delim("~/Downloads/count_summary_rna.tsv", 
+                                delim = "\t", 
+                                escape_double = FALSE, 
+                                trim_ws = TRUE, 
+                                skip = 1)
+```
+
+2. Experimental setup
+
+
+
+## Quick look at data - 1
+```{r}
+summary(count_summary_rna)
+summary(count_summary_rna$Geneid)
+summary(count_summary_rna$Length)
+summary(count_summary_rna$`/beevol/home/gillena/projects/scratch/mike_ribo/data/20181030/star/riboseq/0h_1_RNA_S13_umi.bam`)
+
+```
+
+
+## Quick look at data - 2
+```{r}
+glimpse(count_summary_rna)
+```
+
+## Quick look at data - 3
+```{r}
+count_summary_rna
+```
+
+## Tidying data
+
+- Rename columns
+- Drop unnecessary columns
+- Spread and gather
+
+## Renaming columns
+```{r}
+names(count_summary_rna)
+```
+
+## Renaming columns (cont'd)
+```{r}
+#count_summary_rna <- count_summary_rna %>% rename(`/beevol/home/gillena/projects/scratch/mike_ribo/data/20181030/star/riboseq/0h_1_RNA_S13_umi.bam`, `0h_1`)
+
+```
+
+## Slide with Plot
+```{r pressure}
+plot(pressure)
+```
