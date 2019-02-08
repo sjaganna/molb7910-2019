@@ -20,13 +20,15 @@ This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and for
 
 Set working directory
 ```{r}
-setwd(here)
+setwd(here())
 ```
 
 ## 2. Importing data
 1. RNA read counts  
 ```{r cars, echo = TRUE}
-count_summary_rna <- read_delim("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/count_summary_rna.tsv", 
+count_summary_rna <- read_delim(here("1-class1", 
+                                     "data", 
+                                     "count_summary_rna.tsv"), 
                                 delim = "\t", 
                                 escape_double = FALSE, 
                                 trim_ws = TRUE, 
@@ -35,8 +37,12 @@ count_summary_rna <- read_delim("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - 
 
 2. Experimental metadata
 ```{r}
-experiment_metadata <- read_delim("~/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/experiment-metadata.txt",
-"\t", escape_double = FALSE, trim_ws = TRUE)
+experiment_metadata <- read_delim(here("1-class1", 
+                                       "data", 
+                                       "experiment-metadata.txt"),
+                                  "\t", 
+                                  escape_double = FALSE, 
+                                  trim_ws = TRUE)
 ```
 
 ## 3. Getting familiar with the data
@@ -87,7 +93,7 @@ table(experiment_metadata$hour)
 - Rename columns
 - `spread` and `gather`
 ```{r echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidyr-verbs.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "tidyr-verbs.png"), dpi = 200)
 ```
 
 #### Renaming columns
@@ -105,7 +111,7 @@ names(count_summary_rna)
 #### Merging dataframes
 - `join` to map ensembl IDs to gene_symbols
 ```{r echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/join.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "join.png"), dpi = 200)
 ```
 
 #### String manipulations
@@ -114,6 +120,6 @@ knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The Univ
 #### Data transformation
 - The five verbs of dplyr
 ```{r echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/dplyr-verbs.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "dplyr-verbs.png"), dpi = 200)
 ```
 - `group_by` then `summarise`

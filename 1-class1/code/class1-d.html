@@ -193,8 +193,6 @@ $(document).ready(function () {
 
 <div id="preparing-r" class="section level2">
 <h2>1. Preparing R</h2>
-<p>Set working directory</p>
-<pre class="r"><code>setwd(&quot;/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/&quot;)</code></pre>
 <p>Load packages</p>
 <pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
@@ -205,14 +203,22 @@ $(document).ready(function () {
 <pre><code>## ── Conflicts ────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(&quot;skimr&quot;)</code></pre>
+<pre><code>## Warning: package 'skimr' was built under R version 3.5.2</code></pre>
+<pre class="r"><code>library(&quot;here&quot;)</code></pre>
+<pre><code>## here() starts at /Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910</code></pre>
 <p>This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.</p>
+<p>Set working directory</p>
+<pre class="r"><code>setwd(here())</code></pre>
 </div>
 <div id="importing-data" class="section level2">
 <h2>2. Importing data</h2>
 <ol style="list-style-type: decimal">
 <li>RNA read counts</li>
 </ol>
-<pre class="r"><code>count_summary_rna &lt;- read_delim(&quot;/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/count_summary_rna.tsv&quot;, 
+<pre class="r"><code>count_summary_rna &lt;- read_delim(here(&quot;1-class1&quot;, 
+                                     &quot;data&quot;, 
+                                     &quot;count_summary_rna.tsv&quot;), 
                                 delim = &quot;\t&quot;, 
                                 escape_double = FALSE, 
                                 trim_ws = TRUE, 
@@ -241,8 +247,12 @@ $(document).ready(function () {
 <ol start="2" style="list-style-type: decimal">
 <li>Experimental metadata</li>
 </ol>
-<pre class="r"><code>experiment_metadata &lt;- read_delim(&quot;~/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/data/experiment-metadata.txt&quot;,
-&quot;\t&quot;, escape_double = FALSE, trim_ws = TRUE)</code></pre>
+<pre class="r"><code>experiment_metadata &lt;- read_delim(here(&quot;1-class1&quot;, 
+                                       &quot;data&quot;, 
+                                       &quot;experiment-metadata.txt&quot;),
+                                  &quot;\t&quot;, 
+                                  escape_double = FALSE, 
+                                  trim_ws = TRUE)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   `sample-name` = col_character(),
@@ -431,9 +441,8 @@ glimpse(count_summary_rna)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##     0.0    13.0    38.0   120.8   100.8 24374.0</code></pre>
 <p>An alternative to <code>summary</code> is <code>skim</code>.</p>
-<pre class="r"><code>library(skimr)</code></pre>
-<pre><code>## Warning: package 'skimr' was built under R version 3.5.2</code></pre>
-<pre class="r"><code>skim(count_summary_rna)</code></pre>
+<pre class="r"><code>library(skimr)
+skim(count_summary_rna)</code></pre>
 <pre><code>## Skim summary statistics
 ##  n obs: 20025 
 ##  n variables: 18 
