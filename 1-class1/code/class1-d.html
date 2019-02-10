@@ -458,6 +458,7 @@ names(data)</code></pre>
 
 data_genelevel &lt;- left_join(data, ensembl_to_genesymbol)</code></pre>
 <pre><code>## Joining, by = &quot;ensembl_transcript&quot;</code></pre>
+<pre class="r"><code>write.csv(data_genelevel, file = here(&quot;1-class1&quot;, &quot;data&quot;, &quot;data_genelevel.csv&quot;))</code></pre>
 </div>
 <div id="summarise-the-counts-via-sum-to-collapse-duplicate-transcript-ids." class="section level5">
 <h5>Summarise the counts via sum to collapse duplicate transcript ids.</h5>
@@ -479,7 +480,7 @@ length(data_genelevel$gene_symbol)</code></pre>
 <pre class="r"><code># group_by genes and summarise counts
 nrow(data_genelevel)</code></pre>
 <pre><code>## [1] 20025</code></pre>
-<pre class="r"><code>data_genelevel &lt;- data_genelevel %&gt;% 
+<pre class="r"><code>data_genelevel_summarized &lt;- data_genelevel %&gt;% 
   group_by(gene_symbol) %&gt;% 
   summarise(hour00_rep1 = sum(hour00_rep1), 
             hour00_rep2 = sum(hour00_rep2),
@@ -494,7 +495,7 @@ nrow(data_genelevel)</code></pre>
             hour14_rep2 = sum(hour14_rep2),
             hour14_rep3 = sum(hour14_rep3))
 
-nrow(data_genelevel)</code></pre>
+nrow(data_genelevel_summarized)</code></pre>
 <pre><code>## [1] 10568</code></pre>
 </div>
 </div>

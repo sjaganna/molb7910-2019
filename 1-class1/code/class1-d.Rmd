@@ -281,6 +281,8 @@ data <- data %>% rename(
   ensembl_transcript = Geneid)
 
 data_genelevel <- left_join(data, ensembl_to_genesymbol)
+
+write.csv(data_genelevel, file = here("1-class1", "data", "data_genelevel.csv"))
 ```
 
 ##### Summarise the counts via sum to collapse duplicate transcript ids. 
@@ -301,7 +303,7 @@ length(unique(data_genelevel$gene_symbol))
 # group_by genes and summarise counts
 nrow(data_genelevel)
 
-data_genelevel <- data_genelevel %>% 
+data_genelevel_summarized <- data_genelevel %>% 
   group_by(gene_symbol) %>% 
   summarise(hour00_rep1 = sum(hour00_rep1), 
             hour00_rep2 = sum(hour00_rep2),
@@ -316,7 +318,7 @@ data_genelevel <- data_genelevel %>%
             hour14_rep2 = sum(hour14_rep2),
             hour14_rep3 = sum(hour14_rep3))
 
-nrow(data_genelevel)
+nrow(data_genelevel_summarized)
 ```
 
 ## Homework
