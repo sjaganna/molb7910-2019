@@ -321,6 +321,6 @@ data_genelevel_summarized <- data_genelevel %>%
 nrow(data_genelevel_summarized)
 ```
 
-## Homework
+## Acknowledgements
 
-TBD
+Most images, especially the cheat sheets, are from www.rstudio.com
