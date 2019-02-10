@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1. Preparing R
 Load packages  
-```{r, include = TRUE}
+```{r, include = TRUE, warning=FALSE, message=FALSE}
 library("tidyverse")
 library("skimr")
 library("here")
@@ -20,18 +20,13 @@ This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and for
 
 Set working directory
 ```{r}
+here()
 setwd(here())
 ```
 
 ## 2. Importing data
 
-In base R, we use `read.table`, `read.csv`, `read.delim`, etc. to import data. The problem with these functions is that they often coerce characters and other data types into factors. The tidyverse package `readr` guesses the data type of each column and converts types when appropriate (but does NOT convert strings to factors automatically). 
-
-```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr1.png", dpi = 260)
-```
-
-We will be using `readr` exclusively to import data in this class. The typical commands used to input data using  `readr` are below: 
+In base R, we use `read.table`, `read.csv`, `read.delim`, etc. to import data. The problem with these functions is that they often coerce characters and other data types into factors. The tidyverse package `readr` guesses the data type of each column and converts types when appropriate (but does NOT convert strings to factors automatically). We will be using `readr` exclusively to import data in this class. The typical commands used to input data using  `readr` are below: 
 
 ```{r, echo = FALSE}
 knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr2.png", dpi = 200)
@@ -74,7 +69,6 @@ ensembl_to_genesymbol <- read_csv(here("1-class1",
 ```
 
 
-
 ## 3. Getting familiar with the data
 
 Some of the useful Data Frame Functions are as follows:  
@@ -88,7 +82,7 @@ Some of the useful Data Frame Functions are as follows:
   - str() - structure of data frame - name, type and preview of data in each column
   - glimpse()
 
-```{r}
+```{r, eval=FALSE}
 count_summary_rna #this works well with tbl_df data type. Others could take a LONG time  
 
 # display first six rows of a dataframe
@@ -108,13 +102,13 @@ glimpse(experiment_metadata)
 #### Summary
 
 A generic function used to produce result summaries of the results of various model fitting functions.
-```{r}
+```{r, eval=FALSE}
 summary(count_summary_rna)
 summary(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
 ```
 
 An alternative to `summary` is `skim`. 
-```{r}
+```{r, eval=FALSE}
 library(skimr)
 skim(count_summary_rna)
 ```
@@ -129,7 +123,7 @@ table(experiment_metadata$hour)
 
 The two simplest plots to use to get a sense of your data are `plot(x)` and `hist(x)`
 
-```{r}
+```{r, eval=FALSE}
 plot(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
 
 plot(count_summary_rna$`0h_1_RNA_S13_umi.bam`, count_summary_rna$`0h_2_RNA_S14_umi.bam`)
@@ -157,33 +151,40 @@ What is tidy data?
 knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidydata.png", dpi = 200)
 ```
 
+
+
 #### Reshaping data
 
 The four verbs to keep in mind for reshaping data with `tidyr` are:  
   - `spread`  
   - `gather`  
   - `separate`  
-  - `unite`  
-
-```{r echo = FALSE}
-knitr::include_graphics(here("1-class1", "images", "tidyr-verbs.png"), dpi = 300)
-```
-
-```{r echo = FALSE}
-knitr::include_graphics(here("1-class1", "images", "reshape-data.png"), dpi = 200)
-```
+  - `unite`   
 
 #### Transforming data
 
 The verbs to keep in mind for transforming data with `dplyr` are:  
   - `select`  
-  - `rename`
+  - `rename`  
   - `arrange`  
   - `filter`  
   - `mutate`  
-  - `group_by`
-  - `summarise`
+  - `group_by`  
+  - `summarise`  
   - The pipe: `%>%` 
+  - various `join` functions
+  
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/wrangling1.png", dpi = 200)
+```
+
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/wrangling2.png", dpi = 140)
+```
+
+```{r echo = FALSE}
+knitr::include_graphics(here("1-class1", "images", "join.png"), dpi = 140)
+```
 
 ##### Select columns
 ```{r}
@@ -240,9 +241,6 @@ data_sum <- data %>% mutate(sum_hour00 = sum(hour00_rep1, hour00_rep2, hour00_re
 
 ##### Merging dataframes
 - `join` to map ensembl IDs to gene_symbols
-```{r echo = FALSE}
-knitr::include_graphics(here("1-class1", "images", "join.png"), dpi = 200)
-```
 
 In order to merge the dataframe, we need to first get the Ensembl id in our dataframe to match the Ensembl id in the mapping file. Let's take a look at these. 
 ```{r}
@@ -256,6 +254,12 @@ The Ensembl transcript id in our data table has trailing characters that need to
 data <- data %>% separate(Geneid, sep = "\\.", into = c("Geneid", "extra"))
 
 head(data$Geneid)
+```
+
+On a side note, a handy regex cheatsheet is below:   
+
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/regex.png", dpi = 120)
 ```
 
 It looks like we have the Geneid in the form we need for merging. Now would be a good time to also get the column names to match to enable easy merging. 
