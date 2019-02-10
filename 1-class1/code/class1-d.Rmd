@@ -24,10 +24,31 @@ setwd(here())
 ```
 
 ## 2. Importing data
-1. RNA read counts  
+
+In base R, we use `read.table`, `read.csv`, `read.delim`, etc. to import data. The problem with these functions is that they often coerce characters and other data types into factors. The tidyverse package `readr` guesses the data type of each column and converts types when appropriate (but does NOT convert strings to factors automatically). 
+
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr1.png", dpi = 260)
+```
+
+We will be using `readr` exclusively to import data in this class. The typical commands used to input data using  `readr` are below: 
+
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr2.png", dpi = 200)
+```
+
+Using some of the following arguments makes it easier to control how we want to input the data. 
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr3.png", dpi = 200)
+```
+
+__Note__: All of these functions can also be used in an interactive manner via `Environment` > `Import Dataset` > `From Text (readr)` 
+
+
+#### A. RNA read counts  
 ```{r cars, echo = TRUE}
 count_summary_rna <- read_delim(here("1-class1", 
-                                     "data", 
+                                      "data", 
                                      "count_summary_rna.tsv"), 
                                 delim = "\t", 
                                 escape_double = FALSE, 
@@ -35,7 +56,7 @@ count_summary_rna <- read_delim(here("1-class1",
                                 skip = 1)
 ```
 
-2. Experimental metadata
+#### B. Experimental metadata
 ```{r}
 experiment_metadata <- read_delim(here("1-class1", 
                                        "data", 
@@ -45,7 +66,27 @@ experiment_metadata <- read_delim(here("1-class1",
                                   trim_ws = TRUE)
 ```
 
+#### C. ENSEMBL to Gene Symbol mapping file
+```{r}
+ensembl_to_genesymbol <- read_csv(here("1-class1", 
+                                       "data", 
+                                       "ensembl_to_genesymbol.csv"))
+```
+
+
+
 ## 3. Getting familiar with the data
+
+Some of the useful Data Frame Functions are as follows:  
+  - head() - shows first 6 rows  
+  - tail() - shows last 6 rows  
+  - dim() - returns the dimensions of data frame (i.e. number of rows and number of columns)  
+  - nrow() - number of rows  
+  - ncol() - number of columns  
+  - names() or colnames() - both show the names attribute for a data frame  
+  - sapply(dataframe, class) - shows the class of each column in the data frame  
+  - str() - structure of data frame - name, type and preview of data in each column
+  - glimpse()
 
 ```{r}
 count_summary_rna #this works well with tbl_df data type. Others could take a LONG time  
@@ -55,10 +96,7 @@ head(count_summary_rna)
 
 # display last six rows of a dataframe
 tail(count_summary_rna)  
-```
 
-#### Str and Glimpse
-```{r}
 #Compactly display the internal structure of an R object
 str(count_summary_rna)
 
@@ -87,39 +125,196 @@ Uses the cross-classifying factors to build a contingency table of the counts at
 table(experiment_metadata$hour)
 ```
 
-## 4. Tidying data
+#### Plotting
 
-- Drop unnecessary columns
-- Rename columns
-- `spread` and `gather`
+The two simplest plots to use to get a sense of your data are `plot(x)` and `hist(x)`
+
+```{r}
+plot(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
+
+plot(count_summary_rna$`0h_1_RNA_S13_umi.bam`, count_summary_rna$`0h_2_RNA_S14_umi.bam`)
+
+plot(count_summary_rna$`0h_1_RNA_S13_umi.bam`, count_summary_rna$`14h_1_RNA_S22_umi.bam`)
+
+plot(log2(count_summary_rna$`0h_1_RNA_S13_umi.bam`), log2(count_summary_rna$`14h_1_RNA_S22_umi.bam`))
+
+plot(log2(count_summary_rna$`0h_1_RNA_S13_umi.bam`), log2(count_summary_rna$`0h_2_RNA_S14_umi.bam`))
+
+hist(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
+
+hist(log2(count_summary_rna$`0h_1_RNA_S13_umi.bam`))
+```
+
+
+## 4. Tidying and transforming data
+
+What is tidy data?
+
+>   "Tidy datasets are all alike but every messy dataset is messy in its own way"
+>   Hadley Wickham
+
+```{r, echo = FALSE}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidydata.png", dpi = 200)
+```
+
+#### Reshaping data
+
+The four verbs to keep in mind for reshaping data with `tidyr` are:  
+  - `spread`  
+  - `gather`  
+  - `separate`  
+  - `unite`  
+
 ```{r echo = FALSE}
-knitr::include_graphics(here("1-class1", "images", "tidyr-verbs.png"), dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "tidyr-verbs.png"), dpi = 300)
 ```
 
-#### Renaming columns
+```{r echo = FALSE}
+knitr::include_graphics(here("1-class1", "images", "reshape-data.png"), dpi = 200)
+```
+
+#### Transforming data
+
+The verbs to keep in mind for transforming data with `dplyr` are:  
+  - `select`  
+  - `rename`
+  - `arrange`  
+  - `filter`  
+  - `mutate`  
+  - `group_by`
+  - `summarise`
+  - The pipe: `%>%` 
+
+##### Select columns
 ```{r}
-names(count_summary_rna)
+data <- count_summary_rna %>%
+                  select(-Chr, -Start, -End, -Strand)
 ```
 
-#### Renaming columns (cont'd)
+##### Renaming columns
 ```{r}
-# count_summary_rna <- count_summary_rna %>% rename(`0h_1_RNA_S13_umi.bam`, hour1_rep1)
+names(data)
+
+data <- data %>% rename(
+                        hour00_rep1 = `0h_1_RNA_S13_umi.bam`,
+                        hour00_rep2 = `0h_2_RNA_S14_umi.bam`,
+                        hour00_rep3 = `0h_3_RNA_S15_umi.bam`,
+                        hour04_rep1 = `4h_1_RNA_S16_umi.bam`,
+                        hour04_rep2 = `4h_2_RNA_S17_umi.bam`,
+                        hour04_rep3 = `4h_3_RNA_S18_umi.bam`,
+                        hour08_rep1 = `8h_1_RNA_S19_umi.bam`,
+                        hour08_rep2 = `8h_2_RNA_S20_umi.bam`,
+                        hour08_rep3 = `8h_3_RNA_S21_umi.bam`,
+                        hour14_rep1 = `14h_1_RNA_S22_umi.bam`,
+                        hour14_rep2 = `14h_2_RNA_S23_umi.bam`,
+                        hour14_rep3 = `14h_3_RNA_S24_umi.bam`)
 ```
 
-## 5. Transform data
+##### Rearrange columns
+```{r}
+## Using dplyr
+# data <- data %>% select(Geneid, Length, hour00_rep1, hour00_rep2, hour00_rep3, hour04_rep1, hour04_rep2, hour04_rep3, hour08_rep1, hour08_rep2, hour08_rep3, hour14_rep1, hour14_rep2, hour14_rep3)
 
-#### Merging dataframes
+## Alternative with baseR
+data <- data[, c(1:5, 9:14, 6:8)]
+```
+
+##### Arrange rows by counts
+```{r}
+data <- data %>% arrange(hour14_rep1)
+data <- data %>% arrange(desc(hour14_rep1))
+```
+
+##### Filter rows by counts
+```{r}
+data_sub <- data %>% filter(hour14_rep1 > 2000)
+```
+
+
+##### Mutate an observation. 
+
+Example: Log transformation or sum of multiple columns
+```{r}
+data_sum <- data %>% mutate(sum_hour00 = sum(hour00_rep1, hour00_rep2, hour00_rep3))
+```
+
+##### Merging dataframes
 - `join` to map ensembl IDs to gene_symbols
 ```{r echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "join.png"), dpi = 200)
 ```
 
-#### String manipulations
-- `separate` or `str_split` to split strings
-
-#### Data transformation
-- The five verbs of dplyr
-```{r echo = FALSE}
-knitr::include_graphics(here("1-class1", "images", "dplyr-verbs.png"), dpi = 200)
+In order to merge the dataframe, we need to first get the Ensembl id in our dataframe to match the Ensembl id in the mapping file. Let's take a look at these. 
+```{r}
+head(data$Geneid)
+head(ensembl_to_genesymbol$`Ensembl Transcript ID`)
 ```
-- `group_by` then `summarise`
+
+The Ensembl transcript id in our data table has trailing characters that need to be removed. This is an example of "string manipulation". `stringr` is a very powerful package for string manipulation in R that would take an entire class (at least) to go through. Instead, we are going to use `tidyr`'s `separate` to accomplish this task. 
+
+```{r}
+data <- data %>% separate(Geneid, sep = "\\.", into = c("Geneid", "extra"))
+
+head(data$Geneid)
+```
+
+It looks like we have the Geneid in the form we need for merging. Now would be a good time to also get the column names to match to enable easy merging. 
+
+```{r}
+names(ensembl_to_genesymbol)
+ensembl_to_genesymbol <- ensembl_to_genesymbol %>% rename(
+  ensembl_gene = `Ensembl Gene ID`,
+  ensembl_transcript = `Ensembl Transcript ID`,
+  transcript_length = `Transcript length (including UTRs and CDS)`, 
+  cds_length = `CDS Length`, 
+  gene_symbol = `Associated Gene Name`)
+
+# Remove unnecessary columns
+ensembl_to_genesymbol <- ensembl_to_genesymbol %>% select(ensembl_transcript, gene_symbol)
+
+names(data)
+data <- data %>% rename(
+  ensembl_transcript = Geneid)
+
+data_genelevel <- left_join(data, ensembl_to_genesymbol)
+```
+
+##### Summarise the counts via sum to collapse duplicate transcript ids. 
+
+```{r}
+# remove unnecessary columns
+data_genelevel <- data_genelevel %>% select (-extra, -Length, -ensembl_transcript)
+
+# rearrange to get gene_symbol first
+data_genelevel <- data_genelevel %>% select (gene_symbol, everything())
+
+names(data_genelevel)
+
+# check number of transcripts vs. number of genes
+length(data_genelevel$gene_symbol)
+length(unique(data_genelevel$gene_symbol))
+
+# group_by genes and summarise counts
+nrow(data_genelevel)
+
+data_genelevel <- data_genelevel %>% 
+  group_by(gene_symbol) %>% 
+  summarise(hour00_rep1 = sum(hour00_rep1), 
+            hour00_rep2 = sum(hour00_rep2),
+            hour00_rep3 = sum(hour00_rep3),
+            hour04_rep1 = sum(hour04_rep1),
+            hour04_rep2 = sum(hour04_rep2),
+            hour04_rep3 = sum(hour04_rep3),
+            hour08_rep1 = sum(hour08_rep1),
+            hour08_rep2 = sum(hour08_rep2),
+            hour08_rep3 = sum(hour08_rep3),
+            hour14_rep1 = sum(hour14_rep1),
+            hour14_rep2 = sum(hour14_rep2),
+            hour14_rep3 = sum(hour14_rep3))
+
+nrow(data_genelevel)
+```
+
+## Homework
+
+TBD
