@@ -19,23 +19,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1. File names should be meaningful and end in `.R` or `.Rmd`. Avoid using special characters in file names - stick with numbers, letters, `-`, and `_`.
 
-    ##### Good
-    fit_models.R
-    utility_functions.R
+    ###### Good  
+    fit_models.R  
+    utility_functions.R  
 
-    ##### Bad
-    fit models.R
-    foo.r
-    stuff.r
+    ###### Bad  
+    fit models.R  
+    foo.r  
+    stuff.r  
 
 2. If files should be run in a particular order, prefix them with numbers. If it 
 seems likely you'll have more than 10 files, left pad with zero. It looks nice (constant width) and sorts nicely. 
 
-    00_download.R
-    01_explore.R
-    ...
-    09_model.R
-    10_visualize.R
+    00_download.R  
+    01_explore.R  
+    ...  
+    09_model.R  
+    10_visualize.R  
     
 3. Avoid capitalizing when not necessary. 
 
@@ -50,10 +50,10 @@ seems likely you'll have more than 10 files, left pad with zero. It looks nice (
     
 6. Avoid hard coding file names. Use the package `here()` instead. 
 
-    ##### Good
+    ###### Good
     here("class1", "data.csv")
     
-    ##### Bad
+    ###### Bad
     "/Users/sjaganna/class1/data.csv"
 
 #### Organisation
