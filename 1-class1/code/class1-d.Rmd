@@ -29,12 +29,12 @@ setwd(here())
 In base R, we use `read.table`, `read.csv`, `read.delim`, etc. to import data. The problem with these functions is that they often coerce characters and other data types into factors. The tidyverse package `readr` guesses the data type of each column and converts types when appropriate (but does NOT convert strings to factors automatically). We will be using `readr` exclusively to import data in this class. The typical commands used to input data using  `readr` are below: 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr2.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "readr2.png"), dpi = 200)
 ```
 
 Using some of the following arguments makes it easier to control how we want to input the data. 
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/readr3.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "readr3.png"), dpi = 200)
 ```
 
 __Note__: All of these functions can also be used in an interactive manner via `Environment` > `Import Dataset` > `From Text (readr)` 
@@ -148,9 +148,8 @@ What is tidy data?
 >   Hadley Wickham
 
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidydata.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "tidydata"), dpi = 200)
 ```
-
 
 
 #### Reshaping data
@@ -175,11 +174,11 @@ The verbs to keep in mind for transforming data with `dplyr` are:
   - various `join` functions
   
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/wrangling1.png", dpi = 200)
+knitr::include_graphics(here("1-class1", "images", "wrangling1.png"), dpi = 200)
 ```
 
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/wrangling2.png", dpi = 140)
+knitr::include_graphics(here("1-class1", "images", "wrangling2.png"), dpi = 140)
 ```
 
 ```{r echo = FALSE}
@@ -234,7 +233,7 @@ data_sub <- data %>% filter(hour14_rep1 > 2000)
 
 ##### Mutate an observation. 
 
-Example: Log transformation or sum of multiple columns
+Example: Sum of multiple columns
 ```{r}
 data_sum <- data %>% mutate(sum_hour00 = sum(hour00_rep1, hour00_rep2, hour00_rep3))
 ```
@@ -259,23 +258,20 @@ head(data$Geneid)
 On a side note, a handy regex cheatsheet is below:   
 
 ```{r, echo = FALSE}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/regex.png", dpi = 120)
+knitr::include_graphics(here("1-class1", "images", "regex.png"), dpi = 120)
 ```
 
 It looks like we have the Geneid in the form we need for merging. Now would be a good time to also get the column names to match to enable easy merging. 
 
 ```{r}
+# renames columns of ensembl_to_genesymbol
 names(ensembl_to_genesymbol)
 ensembl_to_genesymbol <- ensembl_to_genesymbol %>% rename(
   ensembl_gene = `Ensembl Gene ID`,
   ensembl_transcript = `Ensembl Transcript ID`,
-  transcript_length = `Transcript length (including UTRs and CDS)`, 
-  cds_length = `CDS Length`, 
   gene_symbol = `Associated Gene Name`)
 
-# Remove unnecessary columns
-ensembl_to_genesymbol <- ensembl_to_genesymbol %>% select(ensembl_transcript, gene_symbol)
-
+# renames columns of data
 names(data)
 data <- data %>% rename(
   ensembl_transcript = Geneid)
@@ -292,7 +288,7 @@ write.csv(data_genelevel, file = here("1-class1", "data", "data_genelevel.csv"))
 data_genelevel <- data_genelevel %>% select (-extra, -Length, -ensembl_transcript)
 
 # rearrange to get gene_symbol first
-data_genelevel <- data_genelevel %>% select (gene_symbol, everything())
+data_genelevel <- data_genelevel %>% select (gene_symbol, ensembl_gene, everything())
 
 names(data_genelevel)
 
@@ -304,7 +300,7 @@ length(unique(data_genelevel$gene_symbol))
 nrow(data_genelevel)
 
 data_genelevel_summarized <- data_genelevel %>% 
-  group_by(gene_symbol) %>% 
+  group_by(ensembl_gene) %>% 
   summarise(hour00_rep1 = sum(hour00_rep1), 
             hour00_rep2 = sum(hour00_rep2),
             hour00_rep3 = sum(hour00_rep3),
