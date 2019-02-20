@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Data and variable types
 Before we start playing around with data, it is important that you are familiar with the following basics.
 
-### Computations in R
+#### Computations in R
 R can be used as an ordinary calculator, some say it is an over-grown calculator. Here are some examples. Remember **#** is the comment character. The comments give details about the operations in case they are not clear.
 ```r{}
 2 + 3 * 5       # Note the order of operations.
@@ -26,10 +26,13 @@ exp(2)        # exponential function
 # This is a comment line
 ```
 
-### Data structures
+#### Data structures
 R has multiple data structures. If you are familiar with excel you can think of data structures as building blocks of a table and the table itself, and a table is similar to a sheet in excel. Most of the time you will deal with tabular data sets, you will manipulate them, take sub-sections of them. It is essential to know what are the common data structures in R and how they can be used. R deals with named data structures, this means you can give names to data structures and manipulate or operate on them using those names.
 
-#### Vectors
+![data structures](https://devopedia.org/images/article/46/9213.1526125966.png)
+Source: Devopedia
+
+##### Vectors
 Vectors are one the core R data structures. It is basically a list of elements of the same type (numeric,character or logical). Later you will see that every column of a table will be represented as a vector. R handles vectors easily and intuitively. You can create vectors with c() function, however that is not the only way. The operations on vectors will propagate to all the elements of the vectors.
 
 ```{r}
@@ -51,7 +54,7 @@ r1[1]            # first element of r1
 r1[2]            # second element of r1
 ```
 
-#### Matrices
+##### Matrices
 A __matrix__ refers to a numeric array of rows and columns. You can think of it as a stacked version of vectors where each row or column is a vector. One of the easiest ways to create a matrix is to combine vectors of equal length using `cbind()`, meaning 'column bind'.
 
 ```{r}
@@ -75,7 +78,7 @@ __Matirices__, __data frames__, and __tibbles__ (the latter two will be covered 
 *slicing/subsetting of a matrix and data frame*.There are additional ways to subset data frames, see the next section.
 
 
-### Data Frames
+##### Data Frames
 A data frame is more general than a matrix, in that different columns can have different modes (numeric, character, factor, etc.). A data frame can be constructed by data.frame() function. For example, we illustrate how to construct a data frame from genomic intervals or coordinates.
 
 ```{r}
@@ -107,7 +110,7 @@ mydata[mydata$START>400,] # get all rows where start>400
 ```
 
 
-### Tibbles
+##### Tibbles
 A __tibble__, or `tbl_df`, is a modern reimagining of the data.frame, keeping what time has proven to be effective, and throwing out what is not. Tibbles are data.frames that are lazy and surly: they do less (i.e. they don't change variable names or types, and don't do partial matching) and complain more (e.g. when a variable does not exist). This forces you to confront problems earlier, typically leading to cleaner, more expressive code. Tibbles also have an enhanced `print()` method which makes them easier to use with large datasets containing complex objects.
 
 If you are new to tibbles, the best place to start is the [tibbles chapter](http://r4ds.had.co.nz/tibbles.html) in *R for data science*.
@@ -130,7 +133,7 @@ tibble(x = 1:5, y = 1, z = x ^ 2 + y)
 `tibble()` does much less than `data.frame()`: it never changes the type of the inputs (e.g. it never converts strings to factors!), it never changes the names of variables, it only recycles inputs of length 1, and it never creates `row.names()`. You can read more about these features in the vignette, `vignette("tibble")`.
 
 
-### Lists
+##### Lists
 An ordered collection of objects (components). A list allows you to gather a variety of (possibly unrelated) objects under one name.
 ```{r}
 # example of a list with 4 components
@@ -148,7 +151,7 @@ w[["mynumbers"]] # component named mynumbers in list
 w$age
 ```
 
-### Factors
+##### Factors
 Factors are used to store categorical data. They are important for statistical modeling since categorical variables are treated differently in statistical models than continuous variables. This ensures categorical data treated accordingly in statistical models.
 ```{r}
 features=c("promoter","exon","intron")
@@ -171,15 +174,37 @@ x
 x <- c("sds","sd","as")
 x
 
-# determine which of the data types 'x' actually is using the class() function
-class(x)
-
 # create an integer vector
 x <- c(1L,2L,3L)
 x
+
+```
+
+### Querying data
+
+R provides many functions to examine features of vectors and other objects, for example
+
+`class()` - what kind of object is it (high-level)?
+`str()` - what is the structure of the object?
+`typeof()` - what is the object’s data type (low-level)?
+`length()` - how long is it? What about two dimensional objects?
+`attributes()` - does it have any metadata?
+
+```{r}
+# determine which of the data types 'x' actually is using the class() function
 class(x)
+
+# typeof() is another function to find data type
+typeof(x)
+
+# use is.? to confirm data type
+is.integer(x)
+is.tibble(iris)
+
+# one data type can be coerced to another using as.<class_name>()
+as.character(x)
 ```
 
 ## Acknowledgements
 
-The material for this class was heavily borrowed from: http://adv-r.had.co.nz/
+The material for this class was heavily borrowed from: http://compgenomr.github.io/book/introduction-to-r.html

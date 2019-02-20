@@ -15,47 +15,52 @@ knitr::opts_chunk$set(echo = TRUE)
 >   
 >   --- Hadley Wickham
 
-## Files 
+#### File Names
 
-#### Names
+1. File names should be meaningful and end in `.R` or `.Rmd`. Avoid using special characters in file names - stick with numbers, letters, `-`, and `_`.
 
-File names should be meaningful and end in `.R` or `.Rmd`. Avoid using special characters in file names - stick with numbers, letters, `-`, and `_`.
+    ###### Good  
+    fit_models.R  
+    utility_functions.R  
 
-    # Good
-    fit_models.R
-    utility_functions.R
+    ###### Bad  
+    fit models.R  
+    foo.r  
+    stuff.r  
 
-    # Bad
-    fit models.R
-    foo.r
-    stuff.r
-
-If files should be run in a particular order, prefix them with numbers. If it 
+2. If files should be run in a particular order, prefix them with numbers. If it 
 seems likely you'll have more than 10 files, left pad with zero. It looks nice (constant width) and sorts nicely. 
 
-    00_download.R
-    01_explore.R
-    ...
-    09_model.R
-    10_visualize.R
+    00_download.R  
+    01_explore.R  
+    ...  
+    09_model.R  
+    10_visualize.R  
     
-Avoid capitalizing when not necessary. 
+3. Avoid capitalizing when not necessary. 
 
-If you want to include dates in your file name, use the ISO 8601 standard: `YYYY-MM-DD`
+4. If you want to include dates in your file name, use the ISO 8601 standard: `YYYY-MM-DD`
 
-Use delimiters intentionally! (helps you to recover metadata easily from file names)
+5. Use delimiters intentionally! (helps you to recover metadata easily from file names)
 
     "_" delimits fields
     "-" delimits words
     
     Example: 2019-02-15_class1_data-wrangling.Rmd
+    
+6. Avoid hard coding file names. Use the package `here()` instead. 
+
+    ###### Good
+    here("class1", "data.csv")
+    
+    ###### Bad
+    "/Users/sjaganna/class1/data.csv"
 
 #### Organisation
 
 Try to give a file a concise name that evokes its contents
 
 One way to organize your files is by grouping them into `data`, `code`, `plots`, etc. 
-
 * project_name
     - data
         + counts.csv
@@ -66,8 +71,8 @@ One way to organize your files is by grouping them into `data`, `code`, `plots`,
         
 #### Internal structure 
 
-Use commented lines of `-` and `=` to break up your file into easily readable 
-chunks.
+Use commented lines of `-` and `=` to break up your code chunk into easily readable 
+segments. Or better yet, make each "action" it's own chunk and give it a name. 
 
 ```{r, eval = FALSE}
 # Load data ---------------------------
@@ -75,95 +80,12 @@ chunks.
 # Plot data ---------------------------
 ```
 
+#### Packages
+
 If your script uses add-on packages, load them all at once at the very 
 beginning of the file. This is more transparent than sprinkling `library()` 
 calls throughout your code or having hidden dependencies that are loaded in a 
 startup file, such as `.Rprofile`.
-
-## Object names
-
-> "There are only two hard things in Computer Science: cache invalidation and 
-> naming things." 
->
-> --- Phil Karlton
-
-Variable and function names should use only lowercase letters, numbers, and `_`. 
-Use underscores (`_`) (so called snake case) to separate words within a name. 
-
-```{r, eval = FALSE}
-# Good
-day_one
-day_1
-# Bad
-DayOne
-dayone
-```
-
-Base R uses dots in function names (`contrib.url()`) and class names 
-(`data.frame`), but it's better to reserve dots exclusively for the S3 object 
-system. In S3, methods are given the name `function.class`; if you also use 
-`.` in function and class names, you end up with confusing methods like
-`as.data.frame.data.frame()`.
-
-If you find yourself attempting to cram data into variable names (e.g. `model_2018`, `model_2019`, `model_2020`), consider using a list or data frame instead.
-
-Generally, variable names should be nouns and function names should be verbs. 
-Strive for names that are concise and meaningful (this is not easy!).
-
-```{r, eval = FALSE}
-# Good
-day_one
-# Bad
-first_day_of_the_month
-djm1
-```
-
-## Pipes
-
-#### What are pipes? 
-
-Use `%>%` to emphasise a sequence of actions, rather than the object that the actions are being performed on. 
-
-Avoid using the pipe when:
-
-* You need to manipulate more than one object at a time. Reserve pipes for a 
-  sequence of steps applied to one primary object.
- 
-* There are meaningful intermediate objects that could be given
-  informative names.
-
-#### Whitespace
-
-`%>%` should always have a space before it, and should usually be followed by a new line. After the first step, each line should be indented by two spaces. This structure makes it easier to add new steps (or rearrange existing steps) and harder to overlook a step.
-
-```{r, eval = FALSE}
-# Good
-iris %>%
-  group_by(Species) %>%
-  summarize_if(is.numeric, mean) %>%
-  ungroup() %>%
-  gather(measure, value, -Species) %>%
-  arrange(value)
-# Bad
-iris %>% group_by(Species) %>% summarize_all(mean) %>%
-ungroup %>% gather(measure, value, -Species) %>%
-arrange(value)
-```
-
-#### Long lines
-
-If the arguments to a function don't all fit on one line, put each argument on 
-its own line and indent:
-
-```{r, eval = FALSE}
-iris %>%
-  group_by(Species) %>%
-  summarise(
-    Sepal.Length = mean(Sepal.Length),
-    Sepal.Width = mean(Sepal.Width),
-    Species = n_distinct(Species)
-  )
-```
 
 #### Acknowledgements
 Source: https://style.tidyverse.org/

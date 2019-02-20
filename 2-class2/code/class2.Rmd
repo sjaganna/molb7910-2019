@@ -1,0 +1,393 @@
+---
+title: "Class 2: Exploratory Data Analysis (EDA)"
+author: "Neelanjan Mukherjee"
+date: "2/12/2019"
+output: html_document
+---
+
+
+## Why is EDA so important?  
+
+####  Data can be very sneaky! Presumably everyone here has the same intuition: the data below are quite different from each other - right?  
+
+<br/>
+
+![__Meet the Datasaurus Dozen!__](https://d2f99xq7vri1nk.cloudfront.net/AllDinosGrey_1.png){ width=75% }
+
+<br/>
+
+It turns out that if we only looked at commonly computed summary statistics -> we would think that they all are the same.
+
+<br/>
+
+![While different in appearance, each dataset has the same summary statistics (mean, standard deviation, and Pearson's correlation) to two decimal places.](https://d2f99xq7vri1nk.cloudfront.net/DinoSequentialSmaller.gif){ width=80% }  
+
+<br/>
+  
+![You **REALLY** need to intimately know your data! Here are seven distributions of data, shown as raw data points (or strip-plots), as box-plots, and as violin-plots.](https://d2f99xq7vri1nk.cloudfront.net/BoxViolinSmaller.gif){ width=80% }  
+
+These fantastic visualizations and datasets are from [here.](https://www.autodeskresearch.com/publications/samestats)
+
+<br/>
+
+# Learning objectives  
+*** 
+1. Intro to plotting data with ggplot2
+2. Data exploration - what your data "look" like?
+    + Histograms and Density plots
+    + Box-, violin-, and jitter-plots
+    + Summary tables
+3. Comparing/contrasting data.
+    + Correlation
+    + PCA (principle components analysis)
+    + Clustering    
+
+
+
+```{r setup,echo=FALSE, message=FALSE}
+# We need to load all the libraries we think are needed for this exercise.
+library(tidyverse) # data-warngling
+library(ggplot2) # plotting
+library(ggthemes) # pretty plotting themes
+library(ggrepel) # make nice data point labels
+library(reshape2) # converting data from wide-to-long and long-to-wide
+library(gridExtra) # arranging multiple plots
+library(scales) # nice annotating of x/y axes in plots
+library(viridis) # nice color pallete
+library(here)
+library(corrplot) # easy correlation plots
+library(pheatmap) # easy heatmaps
+# MUST set working directory
+setwd(here()) # need to sent current directory
+
+```
+
+## 1. Intro to plotting data with ggplot2 
+R has many useful plotting functions that come installed (base functions), for example `hist()`, `plot()`, and `barplot()`. I typically use these functions on the fly while I'm coding to perform quick checks. However, they are a limited, a bit clunky, and far from aesthetically appealing for making convincing graphs/plots. A popular alternative is [ggplot2](https://ggplot2.tidyverse.org/). While graphs produced using ggplot2 defaults are (imo) not quite publication qualitym with a few tweaks you can pretty much get there! We will cover the following ggplot topics:
+
+*** 
+### A. The basic syntax of `ggplot()`  
+
+`ggplot()`: build plots piece by piece
+The concept of ggplot divides a plot into three different fundamental parts:
+
+plot = __data__ + __aesthetics__ + __geometry__.  
+<br/>
+__data__: a data frame
+<br/>
+__aesthetics__: specify x and y variables, and other features - color, size, shape, etc.
+<br/>
+__geometry__: specify type of plots  - histogram, boxplot, line, density, dotplot, bar, etc. 
+<br/>
+
+
+### B. Producing different types of plots
+    + Histograms and density plots
+    + Box-, violin-, and jitter-plots
+    + Summary tables
+    
+### C. Additional considerations (will return to in class #4)
+    + Multiple plots
+    + Themes
+    + Titles, axes, and legends
+    + Colors
+    + Scales
+
+
+
+
+
+
+## 2. Data exploration - what your data "look" like?  
+Ok let's get this show on the road and import some data!!!
+```{r}
+
+data_genelevel <- read_delim(here("2-class2",
+                        "data",
+                        "data_genelevel.tsv"),
+                   delim = "\t",
+                   escape_double = FALSE,
+                   trim_ws = TRUE)
+
+
+lib_counts <- data.frame("lib"=colnames(data_genelevel[,-1]),
+                         "counts"=colSums(data_genelevel[,-1])
+                         )
+
+
+summary(data_genelevel) # let's get a feel for the data
+
+# histogram
+ggplot(data = data_genelevel, aes(x = hour00_rep1)) +
+  geom_histogram(bins = 50) +
+  theme_few() +
+  ggtitle("histogram")
+
+
+# histogram log10-scale
+ggplot(data = data_genelevel, aes(x = log10(hour00_rep1))) +
+  geom_histogram(bins = 50) +
+  theme_few() +
+  ggtitle("histogram log10-scale")
+
+# histogram log10-scale -> my preferred route
+ggplot(data = data_genelevel, aes(x = hour00_rep1)) +
+  geom_histogram(bins = 50) +
+  scale_x_log10() +
+  theme_few() +
+  ggtitle("histogram log10-scale")
+
+# histogram log10-scale with pseudocount
+ggplot(data = data_genelevel, aes(x = hour00_rep1)) +
+  geom_histogram(bins = 50) +
+  scale_x_log10() +
+  theme_few() +
+  ggtitle("histogram log10-scale with pseudocount")
+
+
+# density log10-scale with pseudocount
+ggplot(data = data_genelevel, aes(x = hour00_rep1 + 1)) +
+  geom_density(bins = 50) +
+  scale_x_log10() +
+  theme_few() +
+  ggtitle("density log10-scale with pseudocount")
+
+# scattter plot
+ggplot(data = data_genelevel, aes(x = hour00_rep1, y = hour00_rep2)) +
+  geom_point() + 
+  theme_few() +
+  ggtitle("scattter plot")
+
+# scattter plot log10-scale with pseudocount
+ggplot(data = data_genelevel, aes(x = hour00_rep1 + 1, y = hour00_rep2 + 1)) +
+  geom_point() + 
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_few() +
+  ggtitle("scattter plot log10-scale with pseudocount")
+
+long_genelevel <- reshape2::melt(data_genelevel) # convert from wide-to-long
+names(long_genelevel) <- c("gene_symbol","Sample", "Count") # rename columns
+
+# density of all samples log10-scale with pseudocount
+ggplot(long_genelevel, aes(x=Count + 1, color = Sample)) + 
+  geom_density() +
+  scale_x_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  ggtitle("density samples log10-scale with pseudocount")
+
+# boxplot of all samples log10-scale with pseudocount
+ggplot(long_genelevel, aes(y=Count + 1, x = Sample, color = Sample)) + 
+  geom_boxplot() +
+  scale_y_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("boxplot samples log10-scale with pseudocount")
+
+# violinplot of all samples log10-scale with pseudocount
+ggplot(long_genelevel, aes(y=Count + 1, x = Sample, color = Sample)) + 
+  geom_violin() +
+  scale_y_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("violinplot samples log10-scale with pseudocount")
+
+
+```
+
+
+
+## 3. Comparing/contrasting data
+### Let's ask how similar the samples are to each other
+
+
+
+#### Correlation
+```{r}
+gene_cor_pearson <- cor(x = log10(data_genelevel[,-1] + 1), method = "pearson")
+
+
+gene_cor_spearman <- cor(x = data_genelevel[,-1], method = "spearman")
+
+corrplot(corr = gene_cor_pearson,
+         addCoefasPercent = T,
+         addCoef.col = "white",
+         number.cex = .8,
+         diag = T
+         )
+
+
+corrplot(corr = gene_cor_pearson,
+         addCoefasPercent = T,
+         addCoef.col = "white",
+         number.cex = .8,
+         diag = T,
+         # col = rev(viridis(20)),
+         order = "hclust",
+         addrect = 4,
+         rect.col = "red",
+         title = "Pearson"
+         )
+
+corrplot(corr = gene_cor_spearman,
+         addCoefasPercent = T,
+         addCoef.col = "white",
+         number.cex = .8,
+         diag = T,
+         # col = rev(viridis(20)),
+         order = "hclust",
+         addrect = 4,
+         rect.col = "red",
+         title = "Spearman"
+         )
+
+
+
+corrplot(corr = gene_cor_pearson,
+         type = "upper",
+         col = rev(viridis(20)),
+         addCoefasPercent = T,
+         addCoef.col = "white",
+         number.cex = .8,
+         diag = F,
+         title = "Pearson Upper Triangular"
+         )
+
+
+
+
+```
+
+#### Clustering
+
+We've already played around with clustering in the correlation plot. However, it is important and so lets do it from scratch. You can cluster any matrix. We will cluster the matrix produced by the pearson correlation.
+
+```{r}
+
+pheatmap(mat = gene_cor_pearson, 
+         border_color = "black",
+         cluster_rows = T,
+         cluster_cols = T )
+
+
+pheatmap(mat = gene_cor_pearson,
+         clustering_method = "ward.D2", 
+         border_color = "black",
+         cluster_rows = T,
+         cluster_cols = T )
+
+
+```
+
+
+#### Principle components analysis (PCA)
+
+PCA is a common dimensionality reduction method that is used to visualize the similarity and differences in your data. __Please watch this fantastic 5 minute video explaining PCA__
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HMOI_lkzW08" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Statquest really is the best! Anyway, for more detailed explanations go [here](https://www.nature.com/articles/nbt0308-303) and [here](https://liorpachter.wordpress.com/2014/05/26/what-is-principal-component-analysis/).
+
+
+
+We will use the `prcomp()` function to perform PCA analysis. Please note that you should typically center and scale your data.
+
+```{r }
+
+pcDF <- prcomp(log10(data_genelevel[,-1] + 1), center = T, scale. = T) 
+
+summary(pcDF) # summarize the PCs by variance
+a <- summary(pcDF) # assing the summary to the variable 'a'
+a$importance[2,1] # then we can pull specific numbers out of 'a'
+```
+
+Let's say we want ask how different the samples are to each other using the variance accross all genes.
+
+```{r }
+pcDFData <- data.frame(pcDF$rotation) # we make a dataframe out of the rotations and will use this to plot
+
+
+ggplot(pcDFData, aes(x=PC2, y=PC1)) +
+  geom_point(size=2) +
+  geom_text_repel(label=rownames(pcDFData)) +
+  theme_few() +
+  labs(ylab(paste("PC1 (%",100*round(a$importance[2,1], digits = 3),")", sep = "")
+)) +
+  labs(xlab(paste("PC2 (%",100*round(a$importance[2,2], digits = 3),")", sep = "")
+)) +
+  ggtitle("PCA analysis") 
+
+
+pcDFData$ID <- rownames(pcDFData)
+pcDFData <- pcDFData %>% separate(col = ID, sep = "_", into = c("time","rep"))
+
+
+ggplot(pcDFData, aes(x=PC2, y=PC1)) +
+  geom_point(size=2, aes(shape = rep, color = time)) +
+  geom_text_repel(label=rownames(pcDFData)) +
+  scale_color_manual(values = rev(viridis(4, option="D", end = .8))) +
+  theme_few() +
+  labs(ylab(paste("PC1 (%",100*round(a$importance[2,1], digits = 3),")", sep = "")
+)) +
+  labs(xlab(paste("PC2 (%",100*round(a$importance[2,2], digits = 3),")", sep = "")
+)) +
+  ggtitle("PCA analysis") 
+
+
+```
+
+
+
+### Actual biological questions
+
+Is DUX4 induced?
+What happens to DUX4 target genes with DUX4 induction over time?
+Do they go up? Do they go down? Do they do anything special?
+
+```{r}
+
+dux_targets <- c("AC010606.1", "ALPPL2", "C1DP2", "CCNA1", "DUXA", "HNRNPCL1", "KDM4E", "KHDC1L", "KHDC1L", "KHDC1P1", "KLF17", "LEUTX", "MBD3L2", "MBD3L3", "MBD3L4", "MBD3L5", "PRAMEF1", "PRAMEF10", "PRAMEF11", "PRAMEF12", "PRAMEF13", "PRAMEF14", "PRAMEF15", "PRAMEF17", "PRAMEF18", "PRAMEF19", "PRAMEF2", "PRAMEF3", "PRAMEF4", "PRAMEF5", "PRAMEF6", "PRAMEF7", "PRAMEF8", "PRAMEF9", "RFPL2", "RFPL4B", "RP11-432M8.11", "RP11-432M8.17", "RP11-432M8.9", "RP11-554D14.4", "RP13-221M14.1", "RP13-221M14.3", "RP13-221M14.5", "SLC34A2", "TPRX1", "TRIM43", "TRIM43B", "TRIM43CP", "TRIM49","TRIM49B", "TRIM49C", "TRIM49DP", "TRIM49L1", "TRIM51", "TRIM51BP", "TRIM51CP", "TRIM51EP", "TRIM53AP", "TRIM53BP", "TRIM53CP", "WI2-2994D6.1", "WI2-2994D6.2", "WI2-3308P17.2", "XX-FW84067D5.1", "ZNF280A", "ZNF705G", "ZSCAN4")
+
+
+long_genelevel$target <- if_else(condition = long_genelevel$gene_symbol %in% dux_targets,
+        true = "target",
+        false = "not target"
+          )
+
+ggplot(data = long_genelevel  %>% filter(gene_symbol=="DUXA"), aes(x = Sample, y = Count)) +
+  geom_point() +
+  scale_y_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("log10 DUXA counts")
+
+ggplot(data = long_genelevel, aes(x = Sample, y = Count, fill = target)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("DUX4 targets vs not targets")
+
+
+ggplot(data = long_genelevel, aes(x = Sample, y = Count, fill = target)) +
+  geom_boxplot(outlier.shape=NA) +
+  scale_y_log10() +
+  theme_few() +
+  theme(legend.position="right") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("DUX4 targets vs not targets")
+
+```
+
+Finally, we will always end our Rmarkdown documents with the sessing information:
+***
+```{r}
+sessionInfo()
+```
+
+

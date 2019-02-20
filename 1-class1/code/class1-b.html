@@ -197,125 +197,54 @@ $(document).ready(function () {
 <p>“Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread.”</p>
 <p>— Hadley Wickham</p>
 </blockquote>
-<div id="files" class="section level2">
-<h2>Files</h2>
-<div id="names" class="section level4">
-<h4>Names</h4>
-<p>File names should be meaningful and end in <code>.R</code> or <code>.Rmd</code>. Avoid using special characters in file names - stick with numbers, letters, <code>-</code>, and <code>_</code>.</p>
-<pre><code># Good
-fit_models.R
-utility_functions.R
-
-# Bad
-fit models.R
-foo.r
-stuff.r</code></pre>
-<p>If files should be run in a particular order, prefix them with numbers. If it seems likely you’ll have more than 10 files, left pad with zero. It looks nice (constant width) and sorts nicely.</p>
-<pre><code>00_download.R
-01_explore.R
-...
-09_model.R
-10_visualize.R</code></pre>
-<p>Avoid capitalizing when not necessary.</p>
-<p>If you want to include dates in your file name, use the ISO 8601 standard: <code>YYYY-MM-DD</code></p>
-<p>Use delimiters intentionally! (helps you to recover metadata easily from file names)</p>
-<pre><code>&quot;_&quot; delimits fields
-&quot;-&quot; delimits words
-
-Example: 2019-02-15_class1_data-wrangling.Rmd</code></pre>
+<div id="file-names" class="section level4">
+<h4>File Names</h4>
+<ol style="list-style-type: decimal">
+<li><p>File names should be meaningful and end in <code>.R</code> or <code>.Rmd</code>. Avoid using special characters in file names - stick with numbers, letters, <code>-</code>, and <code>_</code>.</p>
+<h6 id="good">Good</h6>
+<p>fit_models.R<br />
+utility_functions.R</p>
+<h6 id="bad">Bad</h6>
+<p>fit models.R<br />
+foo.r<br />
+stuff.r</p></li>
+<li><p>If files should be run in a particular order, prefix them with numbers. If it seems likely you’ll have more than 10 files, left pad with zero. It looks nice (constant width) and sorts nicely.</p>
+<p>00_download.R<br />
+01_explore.R<br />
+…<br />
+09_model.R<br />
+10_visualize.R</p></li>
+<li><p>Avoid capitalizing when not necessary.</p></li>
+<li><p>If you want to include dates in your file name, use the ISO 8601 standard: <code>YYYY-MM-DD</code></p></li>
+<li><p>Use delimiters intentionally! (helps you to recover metadata easily from file names)</p>
+<p>“_&quot; delimits fields “-” delimits words</p>
+<p>Example: 2019-02-15_class1_data-wrangling.Rmd</p></li>
+<li><p>Avoid hard coding file names. Use the package <code>here()</code> instead.</p>
+<h6 id="good-1">Good</h6>
+<p>here(“class1”, “data.csv”)</p>
+<h6 id="bad-1">Bad</h6>
+<p>“/Users/sjaganna/class1/data.csv”</p></li>
+</ol>
 </div>
 <div id="organisation" class="section level4">
 <h4>Organisation</h4>
 <p>Try to give a file a concise name that evokes its contents</p>
-<p>One way to organize your files is by grouping them into <code>data</code>, <code>code</code>, <code>plots</code>, etc.</p>
-<ul>
-<li>project_name
-<ul>
-<li>data
-<ul>
-<li>counts.csv</li>
-<li>metadata.txt</li>
-</ul></li>
-<li>code
-<ul>
-<li>explore.Rmd</li>
-<li>visualize.Rmd</li>
-</ul></li>
-</ul></li>
-</ul>
+<p>One way to organize your files is by grouping them into <code>data</code>, <code>code</code>, <code>plots</code>, etc. * project_name - data + counts.csv + metadata.txt - code + explore.Rmd + visualize.Rmd</p>
 </div>
 <div id="internal-structure" class="section level4">
 <h4>Internal structure</h4>
-<p>Use commented lines of <code>-</code> and <code>=</code> to break up your file into easily readable chunks.</p>
+<p>Use commented lines of <code>-</code> and <code>=</code> to break up your code chunk into easily readable segments. Or better yet, make each “action” it’s own chunk and give it a name.</p>
 <pre class="r"><code># Load data ---------------------------
 
 # Plot data ---------------------------</code></pre>
+</div>
+<div id="packages" class="section level4">
+<h4>Packages</h4>
 <p>If your script uses add-on packages, load them all at once at the very beginning of the file. This is more transparent than sprinkling <code>library()</code> calls throughout your code or having hidden dependencies that are loaded in a startup file, such as <code>.Rprofile</code>.</p>
-</div>
-</div>
-<div id="object-names" class="section level2">
-<h2>Object names</h2>
-<blockquote>
-<p>“There are only two hard things in Computer Science: cache invalidation and naming things.”</p>
-<p>— Phil Karlton</p>
-</blockquote>
-<p>Variable and function names should use only lowercase letters, numbers, and <code>_</code>. Use underscores (<code>_</code>) (so called snake case) to separate words within a name.</p>
-<pre class="r"><code># Good
-day_one
-day_1
-# Bad
-DayOne
-dayone</code></pre>
-<p>Base R uses dots in function names (<code>contrib.url()</code>) and class names (<code>data.frame</code>), but it’s better to reserve dots exclusively for the S3 object system. In S3, methods are given the name <code>function.class</code>; if you also use <code>.</code> in function and class names, you end up with confusing methods like <code>as.data.frame.data.frame()</code>.</p>
-<p>If you find yourself attempting to cram data into variable names (e.g. <code>model_2018</code>, <code>model_2019</code>, <code>model_2020</code>), consider using a list or data frame instead.</p>
-<p>Generally, variable names should be nouns and function names should be verbs. Strive for names that are concise and meaningful (this is not easy!).</p>
-<pre class="r"><code># Good
-day_one
-# Bad
-first_day_of_the_month
-djm1</code></pre>
-</div>
-<div id="pipes" class="section level2">
-<h2>Pipes</h2>
-<div id="what-are-pipes" class="section level4">
-<h4>What are pipes?</h4>
-<p>Use <code>%&gt;%</code> to emphasise a sequence of actions, rather than the object that the actions are being performed on.</p>
-<p>Avoid using the pipe when:</p>
-<ul>
-<li><p>You need to manipulate more than one object at a time. Reserve pipes for a sequence of steps applied to one primary object.</p></li>
-<li><p>There are meaningful intermediate objects that could be given informative names.</p></li>
-</ul>
-</div>
-<div id="whitespace" class="section level4">
-<h4>Whitespace</h4>
-<p><code>%&gt;%</code> should always have a space before it, and should usually be followed by a new line. After the first step, each line should be indented by two spaces. This structure makes it easier to add new steps (or rearrange existing steps) and harder to overlook a step.</p>
-<pre class="r"><code># Good
-iris %&gt;%
-  group_by(Species) %&gt;%
-  summarize_if(is.numeric, mean) %&gt;%
-  ungroup() %&gt;%
-  gather(measure, value, -Species) %&gt;%
-  arrange(value)
-# Bad
-iris %&gt;% group_by(Species) %&gt;% summarize_all(mean) %&gt;%
-ungroup %&gt;% gather(measure, value, -Species) %&gt;%
-arrange(value)</code></pre>
-</div>
-<div id="long-lines" class="section level4">
-<h4>Long lines</h4>
-<p>If the arguments to a function don’t all fit on one line, put each argument on its own line and indent:</p>
-<pre class="r"><code>iris %&gt;%
-  group_by(Species) %&gt;%
-  summarise(
-    Sepal.Length = mean(Sepal.Length),
-    Sepal.Width = mean(Sepal.Width),
-    Species = n_distinct(Species)
-  )</code></pre>
 </div>
 <div id="acknowledgements" class="section level4">
 <h4>Acknowledgements</h4>
 <p>Source: <a href="https://style.tidyverse.org/" class="uri">https://style.tidyverse.org/</a></p>
-</div>
 </div>
 </div>
 

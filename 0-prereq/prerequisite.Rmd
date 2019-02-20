@@ -10,7 +10,7 @@ The goal of this pre-class assignment is to make sure that you:
 
 A) Install R
 B) Install Rstudio
-C) Install tidyverse and rmarkdown packages 
+C) Install `tidyverse`, `rmarkdown`, and `here` packages 
 D) Create a new Rmarkdown document (lastname-prereq.rmd) - more about this later
 E) Knit the .Rmd document and submit the resulting .html file as your pre-class assignment
 
@@ -38,6 +38,7 @@ r["CRAN"] = "http://cran.us.r-project.org"
 options(repos = r)
 install.packages("tidyverse")
 install.packages("rmarkdown")
+install.packages("here")
 ```
   
 #### D) Create a new Rmarkdown document (lastname-prereq.rmd) 
@@ -52,9 +53,11 @@ Now that your R environment is set up (or should be set up), let's check that th
 ![](newRmd2.png)
 
 4. Within the first code chunk (the grey boxed area between lines 8-10), enter the following as new lines. Change the option "include=FALSE" to "include=TRUE". 
+
 ```{r eval=FALSE}
 library("tidyverse")
 library("rmarkdown")
+library("here")
 sessionInfo()
 ```  
 Like so.   
@@ -72,4 +75,4 @@ Upload the html output (which should show up in whichever folder you keep the .R
 
 ## Acknowledgements
 
-I have borrowed content heavily from the ![Rstudio website](https://www.rstudio.com/products/rstudio/features/). 
+I have borrowed content heavily from the [Rstudio website](https://www.rstudio.com/products/rstudio/features/). 
