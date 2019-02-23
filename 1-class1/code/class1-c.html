@@ -196,7 +196,8 @@ $(document).ready(function () {
 <p>Before we start playing around with data, it is important that you are familiar with the following basics.</p>
 <div id="computations-in-r" class="section level4">
 <h4>Computations in R</h4>
-<p>R can be used as an ordinary calculator, some say it is an over-grown calculator. Here are some examples. Remember <strong>#</strong> is the comment character. The comments give details about the operations in case they are not clear.</p>
+<p>R can be used as an ordinary calculator. Here are some examples.</p>
+<p>Remember <strong>#</strong> is the comment character. The comments give details about the operations in case they are not clear.</p>
 <pre class="r{}"><code>2 + 3 * 5       # Note the order of operations.
 log(10)        # Natural logarithm with base e
 5^2            # 5 raised to the second power
@@ -206,6 +207,7 @@ abs(3-7)      # Absolute value of 3-7
 pi             # The number
 exp(2)        # exponential function
 # This is a comment line</code></pre>
+<p><span class="math inline">\(\color{red}{\text{Your turn...}}\)</span> Try some calculations.</p>
 </div>
 <div id="data-structures" class="section level4">
 <h4>Data structures</h4>
@@ -215,7 +217,7 @@ exp(2)        # exponential function
 <h5>Vectors</h5>
 <p>Vectors are one the core R data structures. It is basically a list of elements of the same type (numeric,character or logical). Later you will see that every column of a table will be represented as a vector. R handles vectors easily and intuitively. You can create vectors with c() function, however that is not the only way. The operations on vectors will propagate to all the elements of the vectors.</p>
 <pre class="r"><code>x &lt;- c(1,3,2,10,5)    #create a vector named x with 5 components
-x = c(1,3,2,10,5)  # alternativelt you can use '=' though I don't recommend it.
+x = c(1,3,2,10,5)  # alternatively you can use '=' though I don't recommend it.
 x</code></pre>
 <pre><code>## [1]  1  3  2 10  5</code></pre>
 <pre class="r"><code>y &lt;- 1:5              #create a vector of consecutive integers y
@@ -241,11 +243,13 @@ length(r1)           #length of the vector</code></pre>
 <pre><code>## [1] 1</code></pre>
 <pre class="r"><code>r1[2]            # second element of r1</code></pre>
 <pre><code>## [1] 1</code></pre>
+<pre class="r"><code>r2 &lt;- c(&quot;x&quot;, &quot;y&quot;, &quot;z&quot;) #this creates a character vector of length 3</code></pre>
+<p><span class="math inline">\(\color{red}{\text{Your turn...}}\)</span> Create a new vector <code>r3</code> containing the names of yourself, and the two people on either side of you.</p>
 </div>
 <div id="matrices" class="section level5">
 <h5>Matrices</h5>
 <p>A <strong>matrix</strong> refers to a numeric array of rows and columns. You can think of it as a stacked version of vectors where each row or column is a vector. One of the easiest ways to create a matrix is to combine vectors of equal length using <code>cbind()</code>, meaning ‘column bind’.</p>
-<pre class="r"><code>x &lt;- c(1,2,3,4)
+<pre class="r"><code>x &lt;- c(1,2,3,4) #c is for combine
 y &lt;- c(4,5,6,7)
 m1 &lt;- cbind(x,y)
 m1</code></pre>
@@ -326,8 +330,9 @@ mydata</code></pre>
 <p>A <strong>tibble</strong>, or <code>tbl_df</code>, is a modern reimagining of the data.frame, keeping what time has proven to be effective, and throwing out what is not. Tibbles are data.frames that are lazy and surly: they do less (i.e. they don’t change variable names or types, and don’t do partial matching) and complain more (e.g. when a variable does not exist). This forces you to confront problems earlier, typically leading to cleaner, more expressive code. Tibbles also have an enhanced <code>print()</code> method which makes them easier to use with large datasets containing complex objects.</p>
 <p>If you are new to tibbles, the best place to start is the <a href="http://r4ds.had.co.nz/tibbles.html">tibbles chapter</a> in <em>R for data science</em>.</p>
 <p>Create a tibble from an existing object with <code>as_tibble()</code>:</p>
-<pre class="r"><code>library(tibble)
-as_tibble(iris)</code></pre>
+<pre class="r"><code>library(tibble)</code></pre>
+<pre><code>## Warning: package 'tibble' was built under R version 3.5.2</code></pre>
+<pre class="r"><code>as_tibble(iris)</code></pre>
 <pre><code>## # A tibble: 150 x 5
 ##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
@@ -341,7 +346,7 @@ as_tibble(iris)</code></pre>
 ##  8          5           3.4          1.5         0.2 setosa 
 ##  9          4.4         2.9          1.4         0.2 setosa 
 ## 10          4.9         3.1          1.5         0.1 setosa 
-## # ... with 140 more rows</code></pre>
+## # … with 140 more rows</code></pre>
 <p>This will work for reasonable inputs that are already data.frames, lists, matrices, or tables.</p>
 <p>You can also create a new tibble from column vectors with <code>tibble()</code>:</p>
 <pre class="r"><code>tibble(x = 1:5, y = 1, z = x ^ 2 + y)</code></pre>
@@ -430,10 +435,13 @@ typeof(x)</code></pre>
 is.integer(x)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>is.tibble(iris)</code></pre>
+<pre><code>## Warning: `is.tibble()` is deprecated, use `is_tibble()`.
+## This warning is displayed once per session.</code></pre>
 <pre><code>## [1] FALSE</code></pre>
 <pre class="r"><code># one data type can be coerced to another using as.&lt;class_name&gt;()
 as.character(x)</code></pre>
 <pre><code>## [1] &quot;1&quot; &quot;2&quot; &quot;3&quot;</code></pre>
+<p><span class="math inline">\(\color{red}{\text{Your turn...}}\)</span> Use the above functions to query <code>mydata</code> that you created earlier.</p>
 </div>
 </div>
 <div id="acknowledgements" class="section level2">

@@ -1,0 +1,198 @@
+---
+title: "class3.Rmd"
+author: "Sujatha Jagannathan"
+date: "February 22, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Preparing R
+Load packages  
+```{r, include = TRUE, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("skimr")
+library("here")
+library("edgeR")
+```
+This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.
+
+Set working directory
+```{r}
+here()
+setwd(here())
+```
+
+## 2. Importing data
+```{r}
+
+data_gene_level <- read_csv(here("3-class3", 
+                                      "data", 
+                                     "input",
+                                     "data_gene-level.csv"))
+
+load(here("3-class3", 
+          "data", 
+          "input",
+          "id2genes.Rdata"))
+
+```
+
+## 3. Prepare data
+```{r}
+geneExpr_new <- data_gene_level %>% 
+                  select(-X1, -hgnc_symbol) %>%
+                  rename(id = ensembl_gene_id) %>%
+                  filter(!is.na(id))
+
+geneExpr_new <- data.frame(geneExpr_new)
+row.names(geneExpr_new) <- geneExpr_new$id
+x <- geneExpr_new[, c(2:13)]
+
+x_set1 <- x[, c(1:6)] #4h
+x_set2 <- x[, c(1:3, 7:9)] #8h
+x_set3 <- x[, c(1:3, 10:12)] #14h
+```
+
+## 4. Define the grouping
+```{r}
+group_set1 <- c(1, 1, 1, 2, 2, 2)
+group_set2 <- c(1, 1, 1, 2, 2, 2)
+group_set3 <- c(1, 1, 1, 2, 2, 2)
+```
+
+## 5. Create the design
+```{r}
+design_set1 <- model.matrix(~group_set1)
+design_set2 <- model.matrix(~group_set2)
+design_set3 <- model.matrix(~group_set3)
+```
+
+## 6. Generate a DGE list
+```{r}
+y_set1 <- DGEList(counts=x_set1, group=group_set1)
+y_set2 <- DGEList(counts=x_set2, group=group_set2)
+y_set3 <- DGEList(counts=x_set3, group=group_set3)
+```
+
+## 7. Filter genes with low counts (require >1 cpm in at least 1/2 of the samples)
+```{r}
+keep <- rowSums(cpm(y_set1)>1) >= 3
+y1_set1 <- y_set1[keep, , keep.lib.sizes=FALSE]
+
+keep <- rowSums(cpm(y_set2)>1) >= 3
+y1_set2 <- y_set2[keep, , keep.lib.sizes=FALSE]
+
+keep <- rowSums(cpm(y_set3)>1) >= 3
+y1_set3 <- y_set3[keep, , keep.lib.sizes=FALSE]
+```
+
+## 8. Normalize
+```{r}
+#d <- calcNormFactors(d)
+```
+
+## 9. Find differentially expressed genes
+```{r}
+#estimate dispersion
+y2_set1 <- estimateDisp(y1_set1, design_set1)
+y2_set2 <- estimateDisp(y1_set2, design_set2)
+y2_set3 <- estimateDisp(y1_set3, design_set3) 
+
+#find DE genes
+fit_set1 <- glmFit(y2_set1, design_set1)
+lrt.2vs1_set1 <- glmLRT(fit_set1, coef=2) #coef specifies ?
+DUX4_4h <- topTags(lrt.2vs1_set1, n=10733) #n specifies number of genes to view
+
+fit_set2 <- glmFit(y2_set2, design_set2)
+lrt.2vs1_set2 <- glmLRT(fit_set2, coef=2)
+DUX4_8h <- topTags(lrt.2vs1_set2, n=10733)
+
+fit_set3 <- glmFit(y2_set3, design_set3)
+lrt.2vs1_set3 <- glmLRT(fit_set3, coef=2)
+DUX4_14h <- topTags(lrt.2vs1_set3, n=10733)
+```
+
+## 10. Data clean up and export
+```{r}
+## Clean up the data table
+names(DUX4_4h$table) <- c("hour04_logFC", "hour04_logCPM", "hour04_LR", "hour04_pval", "hour04_fdr")
+names(DUX4_8h$table) <- c("hour08_logFC", "hour08_logCPM", "hour08_LR", "hour08_pval", "hour08_fdr")
+names(DUX4_14h$table) <- c("hour14_logFC", "hour14_logCPM", "hour14_LR", "hour14_pval", "hour14_fdr")
+
+## Assemble final data structure for ploting figures
+hour04 <- cbind(id = row.names(DUX4_4h$table), DUX4_4h$table)
+hour08 <- cbind(id = row.names(DUX4_8h$table), DUX4_8h$table)
+hour14 <- cbind(id = row.names(DUX4_14h$table), DUX4_14h$table)
+
+library("dplyr")
+foldchange <- full_join(hour04, hour08, by = "id")
+foldchange <- full_join(foldchange, hour14, by = "id")
+ids <- foldchange$id
+foldchange <- merge(genes, foldchange, by = "id")
+```
+
+```{r}
+plot(foldchange$hour04_logCPM, foldchange$hour04_logFC, 
+     pch=16, 
+     cex=1,
+     cex.lab=1.5, 
+     cex.axis=1.5, 
+     cex.main=1.5, 
+     cex.sub=1.5,
+     ylim = c(-12, 12),
+     col=ifelse(foldchange$hour04_fdr > 0.05, "#10101020",
+                ifelse(foldchange$hour04_logFC < -2, "#2C7BB6",
+                       ifelse(foldchange$hour04_logFC > 2, "#D71E1D","#AADDA340"))))
+
+plot(foldchange$hour08_logCPM, foldchange$hour08_logFC, 
+     pch=16, 
+     cex=1,
+     cex.lab=1.5, 
+     cex.axis=1.5, 
+     cex.main=1.5, 
+     cex.sub=1.5,
+     ylim = c(-12, 12),
+     col=ifelse(foldchange$hour08_fdr > 0.05, "#10101020",
+                ifelse(foldchange$hour08_logFC < -2, "#2C7BB6",
+                       ifelse(foldchange$hour08_logFC > 2, "#D71E1D","#AADDA340"))))
+
+plot(foldchange$hour14_logCPM, foldchange$hour14_logFC, 
+     pch=16, 
+     cex=1,
+     cex.lab=1.5,
+     cex.axis=1.5, 
+     cex.main=1.5, 
+     cex.sub=1.5,
+     ylim = c(-12, 12),
+     col=ifelse(foldchange$hour14_fdr > 0.05, "#10101020",
+                ifelse(foldchange$hour14_logFC < -2, "#2C7BB6",
+                       ifelse(foldchange$hour14_logFC > 2, "#D71E1D","#AADDA340"))))
+
+identify(foldchange$hour14_logCPM, foldchange$hour14_logFC,
+         labels = foldchange$genes)
+
+
+smoothScatter(foldchange$hour04_logFC, foldchange$hour14_logFC,
+     cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5, 
+              colramp=colorRampPalette(c("white", "#e5f5f9", "#99d8c9", "#2ca25f")))
+abline(lm(foldchange$hour14_logFC ~ foldchange$hour04_logFC))
+
+smoothScatter(foldchange$hour04_logFC, foldchange$hour08_logFC,
+     cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5, 
+              colramp=colorRampPalette(c("white", "#e5f5f9", "#99d8c9", "#2ca25f")))
+abline(lm(foldchange$hour08_logFC ~ foldchange$hour04_logFC))
+
+smoothScatter(foldchange$hour08_logFC, foldchange$hour14_logFC,
+     cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5, 
+              colramp=colorRampPalette(c("white", "#e5f5f9", "#99d8c9", "#2ca25f")))
+abline(lm(foldchange$hour14_logFC ~ foldchange$hour08_logFC))
+```
+
+## Generating UP and DOWN genes
+```{r}
+up <- nrow(foldchange.filtered %>% filter (vDUX4_logFC > 2 & vDUX4_fdr < 0.05))
+down <- nrow(foldchange.filtered %>% filter (vDUX4_logFC < -2 & vDUX4_fdr < 0.05))
+```
