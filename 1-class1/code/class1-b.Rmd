@@ -60,14 +60,23 @@ seems likely you'll have more than 10 files, left pad with zero. It looks nice (
 
 Try to give a file a concise name that evokes its contents
 
-One way to organize your files is by grouping them into `data`, `code`, `plots`, etc. 
-* project_name
+One way to organize your files is by grouping them into `data`, `code`, `plots`, etc.   
+
+For **this class** PLEASE use the following structure:  
+
+  * class1
     - data
-        + counts.csv
-        + metadata.txt
+        + input
+            - counts.csv
+            - metadata.txt
+        + output
+            - genelevel.csv
     - code
         + explore.Rmd
         + visualize.Rmd
+    - images
+        + plot1
+        + plot2
         
 #### Internal structure 
 

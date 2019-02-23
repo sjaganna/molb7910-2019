@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+<br/>
 
 ## 1. Preparing R
 Load packages  
@@ -23,6 +24,7 @@ Set working directory
 here()
 setwd(here())
 ```
+<br/>
 
 ## 2. Importing data
 
@@ -32,13 +34,18 @@ In base R, we use `read.table`, `read.csv`, `read.delim`, etc. to import data. T
 knitr::include_graphics(here("1-class1", "images", "readr2.png"), dpi = 200)
 ```
 
-Using some of the following arguments makes it easier to control how we want to input the data. 
+<br/>  
+
+Using some of the following arguments makes it easier to control how we want to input the data.   
+
 ```{r, echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "readr3.png"), dpi = 200)
 ```
+<br/>  
 
 __Note__: All of these functions can also be used in an interactive manner via `Environment` > `Import Dataset` > `From Text (readr)` 
 
+<br/>  
 
 #### A. RNA read counts  
 ```{r cars, echo = TRUE}
@@ -52,6 +59,8 @@ count_summary_rna <- read_delim(here("1-class1",
                                 skip = 1)
 ```
 
+<br/>  
+
 #### B. Experimental metadata
 ```{r}
 experiment_metadata <- read_delim(here("1-class1", 
@@ -63,6 +72,8 @@ experiment_metadata <- read_delim(here("1-class1",
                                   trim_ws = TRUE)
 ```
 
+<br/>
+
 #### C. ENSEMBL to Gene Symbol mapping file
 ```{r}
 tx2geneid <- read_csv(here("1-class1", 
@@ -70,20 +81,21 @@ tx2geneid <- read_csv(here("1-class1",
                                        "input",
                                        "id-mapping.csv"))
 ```
+<br/>
 
 
 ## 3. Getting familiar with the data
 
 Some of the useful Data Frame Functions are as follows:  
-  - head() - shows first 6 rows  
-  - tail() - shows last 6 rows  
-  - dim() - returns the dimensions of data frame (i.e. number of rows and number of columns)  
-  - nrow() - number of rows  
-  - ncol() - number of columns  
-  - names() or colnames() - both show the names attribute for a data frame  
-  - sapply(dataframe, class) - shows the class of each column in the data frame  
-  - str() - structure of data frame - name, type and preview of data in each column
-  - glimpse()
+  - `head()` - shows first 6 rows  
+  - `tail()` - shows last 6 rows  
+  - `dim()` - returns the dimensions of data frame (i.e. number of rows and number of columns)  
+  - `nrow()` - number of rows  
+  - `ncol()` - number of columns  
+  - `names()` or `colnames()` - both show the names attribute for a data frame  
+  - `sapply(dataframe, class)` - shows the class of each column in the data frame  
+  - `str()` - structure of data frame - name, type and preview of data in each column
+  - `glimpse()`
 
 ```{r, eval=FALSE}
 count_summary_rna #this works well with tbl_df data type. Others could take a LONG time  
@@ -101,6 +113,7 @@ str(count_summary_rna)
 glimpse(count_summary_rna)
 glimpse(experiment_metadata)
 ```
+<br/>
 
 #### Summary
 
@@ -115,12 +128,14 @@ An alternative to `summary` is `skim`.
 library(skimr)
 skim(count_summary_rna)
 ```
+<br/>
 
 #### Table
 Uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels.
 ```{r}
 table(experiment_metadata$hour)
 ```
+<br/>
 
 #### Plotting
 
@@ -141,6 +156,7 @@ hist(count_summary_rna$`0h_1_RNA_S13_umi.bam`)
 
 hist(log2(count_summary_rna$`0h_1_RNA_S13_umi.bam`))
 ```
+<br/>
 
 
 ## 4. Tidying and transforming data
@@ -154,6 +170,8 @@ What is tidy data?
 knitr::include_graphics(here("1-class1", "images", "tidydata.png"), dpi = 200)
 ```
 
+<br/>  
+
 
 #### Reshaping data
 
@@ -162,6 +180,7 @@ The four verbs to keep in mind for reshaping data with `tidyr` are:
   - `gather`  
   - `separate`  
   - `unite`   
+<br/>
 
 #### Transforming data
 
@@ -175,24 +194,32 @@ The verbs to keep in mind for transforming data with `dplyr` are:
   - `summarise`  
   - The pipe: `%>%` 
   - various `join` functions
-  
+<br/>
+
 ```{r, echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "wrangling1.png"), dpi = 200)
 ```
+
+<br/>
 
 ```{r, echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "wrangling2.png"), dpi = 140)
 ```
 
+<br/>
+
 ```{r echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "join.png"), dpi = 140)
 ```
+
+<br/>
 
 ##### Select columns
 ```{r}
 data <- count_summary_rna %>%
                   select(-Chr, -Start, -End, -Strand)
 ```
+<br/>
 
 ##### Renaming columns
 ```{r}
@@ -211,6 +238,7 @@ data <- data %>% rename(hour00_rep1 = `0h_1_RNA_S13_umi.bam`,
                         hour14_rep2 = `14h_2_RNA_S23_umi.bam`,
                         hour14_rep3 = `14h_3_RNA_S24_umi.bam`)
 ```
+<br/>
 
 ##### Rearrange columns
 ```{r}
@@ -220,18 +248,21 @@ data <- data %>% rename(hour00_rep1 = `0h_1_RNA_S13_umi.bam`,
 ## Alternative with baseR
 data <- data[, c(1:5, 9:14, 6:8)]
 ```
+<br/>
 
 ##### Arrange rows by counts
 ```{r}
 data <- data %>% arrange(hour14_rep1)
 data <- data %>% arrange(desc(hour14_rep1))
 ```
+<br/>
 
 ##### Filter rows by counts
 ```{r}
 data_sub <- data %>% filter(hour14_rep1 > 2000)
 ```
 
+<br/>
 
 ##### Mutate an observation. 
 
@@ -239,6 +270,7 @@ Example: Sum of multiple columns
 ```{r}
 data_sum <- data %>% mutate(sum_hour00 = sum(hour00_rep1, hour00_rep2, hour00_rep3))
 ```
+<br/>
 
 ##### Merging dataframes
 - `join` to map ensembl IDs to gene_symbols
@@ -256,12 +288,14 @@ data <- data %>% separate(Geneid, sep = "\\.", into = c("Geneid", "extra"))
 
 head(data$Geneid)
 ```
+<br/>
 
 On a side note, a handy regex cheatsheet is below:   
 
 ```{r, echo = FALSE}
 knitr::include_graphics(here("1-class1", "images", "regex.png"), dpi = 120)
 ```
+<br/>
 
 It looks like we have the Geneid in the form we need for merging. Now would be a good time to also get the column names to match to enable easy merging. 
 
@@ -277,6 +311,7 @@ data <- data %>% rename(
 
 data_transcriptlevel <- left_join(data, tx2geneid)
 ```
+<br/>
 
 $\color{red}{\text{Your turn...}}$ Remove the column `extra` and rearrange the remaining columns in the following order: `gene_symbol`, `ensembl_gene`, `ensembl_transcript`, and everything else. 
 
@@ -285,11 +320,14 @@ data_transcriptlevel <- data_transcriptlevel %>%
   select(-extra) %>% 
   select(hgnc_symbol, ensembl_gene_id, ensembl_transcript_id, everything())
 ```
+<br/>
 
-Export the data for future use (aka, homework)
-```{r}
+$\color{red}{\text{Your turn...}}$ Export the data for future use (aka, homework)
+```{r, include=FALSE}
 write.csv(data_transcriptlevel, file = here("1-class1", "data", "output", "data_transcript-level.csv"))
 ```
+<br/>
+
 
 ##### Summarise the counts via sum to collapse duplicate transcript ids. 
 
@@ -321,12 +359,20 @@ data_genelevel <- data_transcriptlevel %>%
 
 nrow(data_genelevel)
 ```
+<br/>
 
-Export the data for future use (aka, homework)
-```{r}
+  
+$\color{red}{\text{Your turn...}}$ Export the data for future use (aka, homework)
+```{r, include=FALSE}
 write.csv(data_genelevel, file = here("1-class1", "data", "output", "data_gene-level.csv"))
 ```
+<br/>
 
+##### Session Info
+Finally, we will always end our Rmarkdown documents with the session information:
+```{r}
+sessionInfo()
+```
 
 ## Acknowledgements
 
