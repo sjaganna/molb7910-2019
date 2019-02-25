@@ -31,13 +31,23 @@ knitr::opts_chunk$set(echo = FALSE)
     + Export
 - Homework instructions
 
+## Class rules {.build .bigger}
+
+- Ask for help (use the stickie notes)  
+
+- Offer help!   
+      + We have a wide range of R experience in this class room  
+      + Pair with someone with a different R expertise and help each other  
+
+- Use Google *liberally*  
+
 ## Coding best practices
 
 >   "Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread."
 >   
 >   --- Hadley Wickham
 
-## Data types and structures
+## Data types and structures {.smaller}
 - Basic data types: numeric, character, date, and logical. 
 - Basic data structures: vector, matrix, array, data frame (or, tibble), and list. 
 ```{r}
@@ -57,4 +67,5 @@ knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The Univ
 ## Homework
 
 - Instructions online
+
 - Will involve the use of the gene-level data we exported today 
