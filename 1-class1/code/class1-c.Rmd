@@ -10,10 +10,31 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 <br/>  
 
-## Data and variable types
+## Data types
 Before we start playing around with data, it is important that you are familiar with the following basics.
 
-<br/>  
+There are four common data types in R, they are **numeric**, **logical**, **character** and **date**. All these data types can be used to create vectors natively.
+```r{}
+#create a numeric vector x with 5 components
+x <- c(1,3,2,10,5)
+x
+
+#create a logical vector x
+x <- c(TRUE, FALSE, TRUE)
+x
+
+# create a character vector
+x <- c("sds","sd","as")
+x
+
+# create a date vector
+x <- as.Date(c("2019-02-25", "2019-02-27"))
+
+# days until the homework is due 
+x[2] - x[1]
+
+```
+<br/>
 
 #### Computations in R
 R can be used as an ordinary calculator. Here are some examples.  
@@ -37,7 +58,7 @@ $\color{red}{\text{Your turn...}}$ Try some calculations.
 
 <br/>  
 
-#### Data structures
+## Data structures
 R has multiple data structures. If you are familiar with excel you can think of data structures as building blocks of a table and the table itself, and a table is similar to a sheet in excel. Most of the time you will deal with tabular data sets, you will manipulate them, take sub-sections of them. It is essential to know what are the common data structures in R and how they can be used. R deals with named data structures, this means you can give names to data structures and manipulate or operate on them using those names.
 
 <br/>  
@@ -97,7 +118,7 @@ m2
 ```
 <br/>  
 
-__Matirices__, __data frames__, and __tibbles__ (the latter two will be covered next) are all tabular data structures. You can subset them using **[ ]** and providing desired rows and columns to subset. Here is how that works conceptually:
+__Matrices__, __data frames__, and __tibbles__ (the latter two will be covered next) are all tabular data structures. You can subset them using **[ ]** and providing desired rows and columns to subset. Here is how that works conceptually:
 ![alt text](http://compgenomr.github.io/book/Intro2R_data/nonR_figures/slicingDataFrames.png "slicing/subsetting")
 <br/>  
 
@@ -191,31 +212,10 @@ f.feat=factor(features)
 ```
 Important thing to note is that when you are reading a data.frame with read.table() or creating a data frame with **data.frame()** character columns are stored as factors by default, to change this behavior you need to set **stringsAsFactors=FALSE** in **read.table()** and/or **data.frame()** function arguments.
 
-<br/>  
-
-### Data types
-There are four common data types in R, they are **numeric**, **logical**, **character** and **integer**. All these data types can be used to create vectors natively.
-```r{}
-#create a numeric vector x with 5 components
-x <- c(1,3,2,10,5)
-x
-
-#create a logical vector x
-x <- c(TRUE, FALSE, TRUE)
-x
-
-# create a character vector
-x <- c("sds","sd","as")
-x
-
-# create an integer vector
-x <- c(1L,2L,3L)
-x
-```
 
 <br/>  
 
-### Querying data
+## Querying data
 
 R provides many functions to examine features of vectors and other objects, for example
 

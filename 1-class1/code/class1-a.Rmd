@@ -1,7 +1,7 @@
 ---
 title: "class1-a"
 author: "Sujatha Jagannathan"
-date: "January 16, 2019"
+date: "February 25, 2019"
 output: ioslides_presentation
 incremental: true
 ---
@@ -10,7 +10,7 @@ incremental: true
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Learning objectives for this course {.build}
+## Learning objectives for this course
 > The primary learning objectives are to work towards being able to:  
 
 * Retrieve and import genomic data.  
@@ -20,51 +20,41 @@ knitr::opts_chunk$set(echo = FALSE)
 * Visualize and communicate your results.  
 * Practice reproducible analysis.  
 
-## Data Analysis With R 
-
-```{r}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidy1.png", dpi = 120)
-```
-
-Source: Hadley Wickham
-
-## Data Analysis With R
-```{r}
-knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/tidyverse-packages.png", dpi = 240)
-```
-Source: https://ismayc.github.io/poRtland-bootcamp17/slides.html
-
-## Class Organization
-
-- Class 1	Retrieving + Tidying
-- Class 2	Data exploration
-- Class 3	Hypothesis testing
-- Class 4	Visualize/Communicate
-- Class 5	Hypothesis testing
-- Class 6	Visualize/Communicate
-- Class 7	Remediation + Final Projects
-- Class 8	Final Projects
-- Class 9	Final Projects
-
 ## Today's class outline
 
 - Coding best practices
-- Review of data types
-- In-class exercises: 
-    + Import a genomic dataset
-    + Get familiar with the data
-    + Tidy the data
-    + Transform the data
+- Review data types
+- In-class exercise on RNAseq dataset
+    + Import
+    + Tidy (with tidyr)
+    + Transform (with dyplyr)
+    + Export
 - Homework instructions
 
-## R cheatsheets
+## Coding best practices
 
-Rstudio has cheatsheets for each of the packages - use them!   
+>   "Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread."
+>   
+>   --- Hadley Wickham
 
-* [base R](https://www.rstudio.com/wp-content/uploads/2016/10/r-cheat-sheet-3.pdf)
-* [Rstudio](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)
-* [Rmarkdown](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
-* [Readr & Tidyr](https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf)
-* [dplyr](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)
-* [stringr](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf)
-* [ggplot](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+## Data types and structures
+- Basic data types: numeric, character, date, and logical. 
+- Basic data structures: vector, matrix, array, data frame (or, tibble), and list. 
+```{r}
+knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/1-class1/images/data-structures.png", dpi = 150)
+```
+- Data can be queried to understand it better: `class()`, `str()`, etc. 
+
+## Import, tidy, transform, and export an RNA-seq count dataset
+
+- Three data sets
+    + RNAseq count data (Dyle *et al*; unpublished; please keep confidential)
+    + Experimental metadata
+    + Gene annotation
+    
+- Our goal is to import these data, clean up by eliminating unnecessary columns and renaming variables, merge with the gene annotation file to map ensembl ids, summarize transcript-level count data to gene-level (i.e. transform), and then export the file.
+
+## Homework
+
+- Instructions online
+- Will involve the use of the gene-level data we exported today 
