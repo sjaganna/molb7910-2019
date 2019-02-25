@@ -200,10 +200,10 @@ $(document).ready(function () {
 <div id="file-names" class="section level4">
 <h4>File Names</h4>
 <ol style="list-style-type: decimal">
-<li><p>File names should be meaningful and end in <code>.R</code> or <code>.Rmd</code>. Avoid using special characters in file names - stick with numbers, letters, <code>-</code>, and <code>_</code>.</p>
+<li><p>File names should be meaningful and end in <code>.R</code>, <code>.Rmd</code>, etc. Avoid using special characters in file names - stick with numbers, letters, <code>-</code>, and <code>_</code>. <em>Never</em> include spaces in file names!</p>
 <h6 id="good">Good</h6>
 <p>fit_models.R<br />
-utility_functions.R</p>
+utility_functions.Rmd</p>
 <h6 id="bad">Bad</h6>
 <p>fit models.R<br />
 foo.r<br />
@@ -219,11 +219,11 @@ stuff.r</p></li>
 <li><p>Use delimiters intentionally! (helps you to recover metadata easily from file names)</p>
 <p>“_&quot; delimits fields “-” delimits words</p>
 <p>Example: 2019-02-15_class1_data-wrangling.Rmd</p></li>
-<li><p>Avoid hard coding file names. Use the package <code>here()</code> instead.</p>
+<li><p>Avoid hard coding file names. Use the package <code>here()</code> instead. If you absolutely must, use relative paths. Use <code>getwd()</code> to figure out what your working directory is.</p>
 <h6 id="good-1">Good</h6>
 <p>here(“class1”, “data.csv”)</p>
 <h6 id="bad-1">Bad</h6>
-<p>“/Users/sjaganna/class1/data.csv”</p></li>
+<p>“/Users/sjaganna/Desktop/CU-onedrive/08-teaching/molb7910/class1/data.csv”</p></li>
 </ol>
 </div>
 <div id="organisation" class="section level4">

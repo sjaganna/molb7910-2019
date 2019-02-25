@@ -17,11 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### File Names
 
-1. File names should be meaningful and end in `.R` or `.Rmd`. Avoid using special characters in file names - stick with numbers, letters, `-`, and `_`.
+1. File names should be meaningful and end in `.R`, `.Rmd`, etc. Avoid using special characters in file names - stick with numbers, letters, `-`, and `_`. *Never* include spaces in file names! 
 
     ###### Good  
     fit_models.R  
-    utility_functions.R  
+    utility_functions.Rmd  
 
     ###### Bad  
     fit models.R  
@@ -48,13 +48,13 @@ seems likely you'll have more than 10 files, left pad with zero. It looks nice (
     
     Example: 2019-02-15_class1_data-wrangling.Rmd
     
-6. Avoid hard coding file names. Use the package `here()` instead. 
+6. Avoid hard coding file names. Use the package `here()` instead. If you absolutely must, use relative paths. Use `getwd()` to figure out what your working directory is. 
 
     ###### Good
     here("class1", "data.csv")
     
     ###### Bad
-    "/Users/sjaganna/class1/data.csv"
+    "/Users/sjaganna/Desktop/CU-onedrive/08-teaching/molb7910/class1/data.csv"
 
 #### Organisation
 
