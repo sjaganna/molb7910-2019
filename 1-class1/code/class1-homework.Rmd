@@ -11,15 +11,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Home work
 
-The goal of this homework is to compare the expression of DUX4 transcriptional targets to a set of control genes. 
+The goal of this homework is to compare the expression of DUX4 transcriptional targets to a set of control genes.  
+ 
+Please execute the following tasks, knit the resulting .Rmd (Lastname_class1-homework.Rmd) and submit the .html output as your assignment.  
 
-Please execute the following tasks, knit the resulting .Rmd and submit the .html output as your assignment. 
-
-1. Read in the `data_gene-level.csv` we saved in class1-d. 
-2. Read in the `target_genes.csv` file provided
-3. Read in the `rp_genes.csv` file provided. This file includes ribosomal protein gene names, which will serve as our "control" gene set. 
-3. Right join the rnaseq data with target_genes (sanity check: should have 74 observations). Name this dataframe as data_targets
+1. Read in the `data_gene-level.csv` we saved in class1-d. (Files: 1-class1 > data > output > data_gene-level.csv)
+2. Read in the `target_genes.csv` file provided (Files: 1-class1 > data > input > target_genes.csv)
+3. Read in the `rp_genes.csv` file provided. This file includes ribosomal protein gene names, which will serve as our "control" gene set.  (Files: 1-class1 > data > input > rp_genes.csv)
+4. Right join the rnaseq data with target_genes (sanity check: should have 74 observations). Name this dataframe as data_targets
 5. Right join the rnaseq data with rp_genes (sanity check: should have 33 observations). Name this dataframe as data_nontargets
-6. Compare the rna count data from these two data frames using some of the functions we used to query data (eg. summary, skim, etc). Comment on the differences between the expression of the target genes and the nontarget genes. 
-
-
+6. Compare the rna count data from these two data frames using some of the functions we used to query data (eg. summary, skim, etc). 
+7. Comment on the differences between the expression of the target genes and the nontarget genes.
+8. Knit the resulting document and upload the resulting .html as your assignment. 
