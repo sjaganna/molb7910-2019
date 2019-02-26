@@ -1,0 +1,99 @@
+---
+title: "Homework"
+author: "Neelanjan Mukherjee"
+date: "2/26/2019"
+output: html_document
+---
+The goal of this homework is to perform exploratory data analysis on  DUX4 transcriptional targets.
+
+Please execute the following tasks, knit the resulting .Rmd (Lastname_class2-homework.Rmd) and submit the .html output as your assignment.
+You will need to import the following data:  
+* `data_gene-level.tsv`. (Files: 2-class2 > data > input > data_gene-level.tsv)  
+* `target_genes.csv` file provided (Files: 2-class2 > data > input > target_genes.csv)  
+
+## __Perform the following for DUX4 targets only:__
+
+1. Make boxplots and jitterplots of counts for all samples on the same plot. Please make sure to transform the y-axis (log10 or log2) for better visualization. Describe your result in a sentence or two.
+2. Create heatmap of the correlation coefficient of between samples using `corrplot`. Please specify what metric you used and if you transformed the data. Describe your result in a sentence or two.
+3. Create heatmap of clustered DUX4 target expression levels for all samples using `pheatmap`. Please specificy the `clustering_method` and `clustering_distance_rows`. Please make sure to __NOT__ to make a heatmap of the clustered correlation coefficients. Describe your result in a sentence or two.
+4. Perform the same PCA analysis as in class except only for DUX4 targets. Describe your result in a sentence or two.
+5. Always print `sessionInfo()`.
+6. Knit and upload the resulting .html as your assignment. 
+
+
+
+
+
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+
+# load necessary libraries
+# setwd/here()
+
+```
+
+## Import data
+
+
+```{r import}
+
+# import data
+
+```
+
+## Box- and Jitter- plots
+
+Make plots of counts accross all samples __only of DUX4 genes__. 
+
+```{r plots}
+
+# make plots
+
+```
+
+Super cool - the counts go up over time!!
+
+## Correlation
+
+Blah
+
+```{r correlation}
+
+# corrplot
+
+```
+
+Blah Blah
+
+## Clustering DUX4 targets heatmap
+
+Blah
+
+```{r cluster}
+
+# pheatmap
+
+```
+
+Blah Blah
+
+## PCA DUX4 targets heatmap
+
+Blah
+
+```{r pca}
+
+# pca
+
+```
+
+Blah Blah
+
+
+
+```{r session info}
+
+# print r session information
+
+```
