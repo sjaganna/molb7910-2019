@@ -1,5 +1,5 @@
 ---
-title: "class1-a"
+title: "Practical Computational Biology: R"
 author: "Sujatha Jagannathan"
 date: "February 25, 2019"
 output: ioslides_presentation
@@ -39,7 +39,7 @@ knitr::opts_chunk$set(echo = FALSE)
       + We have a wide range of R experience in this class room  
       + Pair with someone with a different R expertise and help each other  
 
-- Use Google *liberally*  
+- Use Google *liberally*  (& the cheatsheets!)
 
 ## Coding best practices
 
@@ -55,13 +55,15 @@ knitr::include_graphics("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The Univ
 ```
 - Data can be queried to understand it better: `class()`, `str()`, etc. 
 
-## Import, tidy, transform, and export an RNA-seq count dataset
+## Import, tidy, transform, and export an RNA-seq count dataset {.smaller}
 
 - Three data sets
     + RNAseq count data (Dyle *et al*; unpublished; please keep confidential)
     + Experimental metadata
     + Gene annotation
     
+<br/>
+
 - Our goal is to import these data, clean up by eliminating unnecessary columns and renaming variables, merge with the gene annotation file to map ensembl ids, summarize transcript-level count data to gene-level (i.e. transform), and then export the file.
 
 ## Homework

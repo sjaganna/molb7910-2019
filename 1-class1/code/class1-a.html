@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>class1-a</title>
+  <title>Practical Computational Biology: R</title>
 
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -21,7 +21,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'class1-a',
+                title: 'Practical Computational Biology: R',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
@@ -143,7 +143,7 @@
 <li>We have a wide range of R experience in this class room<br/></li>
 <li>Pair with someone with a different R expertise and help each other</li>
 </ul></li>
-<li><p>Use Google <em>liberally</em></p></li>
+<li><p>Use Google <em>liberally</em> (&amp; the cheatsheets!)</p></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Coding best practices</h2></hgroup><article  id="coding-best-practices">
@@ -162,7 +162,7 @@
 <li>Data can be queried to understand it better: <code>class()</code>, <code>str()</code>, etc.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Import, tidy, transform, and export an RNA-seq count dataset</h2></hgroup><article  id="import-tidy-transform-and-export-an-rna-seq-count-dataset">
+</article></slide><slide class=""><hgroup><h2>Import, tidy, transform, and export an RNA-seq count dataset</h2></hgroup><article  id="import-tidy-transform-and-export-an-rna-seq-count-dataset" class="smaller">
 
 <ul>
 <li>Three data sets
@@ -172,6 +172,11 @@
 <li>Experimental metadata</li>
 <li>Gene annotation</li>
 </ul></li>
+</ul>
+
+<p><br/></p>
+
+<ul>
 <li>Our goal is to import these data, clean up by eliminating unnecessary columns and renaming variables, merge with the gene annotation file to map ensembl ids, summarize transcript-level count data to gene-level (i.e. transform), and then export the file.</li>
 </ul>
 

@@ -76,14 +76,17 @@ experiment_metadata <- read_delim(here("1-class1",
 
 #### C. ENSEMBL to Gene Symbol mapping file
 ```{r}
-tx2geneid <- read_csv(here("1-class1", 
+id_mapping <- read_csv(here("1-class1", 
                                        "data", 
                                        "input",
                                        "id-mapping.csv"))
 ```
 <br/>
 
+```{r}
+tx2geneid <- id_mapping
 
+```
 ## 3. Getting familiar with the data
 
 Some of the useful Data Frame Functions are as follows:  

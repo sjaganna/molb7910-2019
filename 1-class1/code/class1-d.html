@@ -267,7 +267,7 @@ library(&quot;here&quot;)</code></pre>
 </div>
 <div id="c.-ensembl-to-gene-symbol-mapping-file" class="section level4">
 <h4>C. ENSEMBL to Gene Symbol mapping file</h4>
-<pre class="r"><code>tx2geneid &lt;- read_csv(here(&quot;1-class1&quot;, 
+<pre class="r"><code>id_mapping &lt;- read_csv(here(&quot;1-class1&quot;, 
                                        &quot;data&quot;, 
                                        &quot;input&quot;,
                                        &quot;id-mapping.csv&quot;))</code></pre>
@@ -280,6 +280,7 @@ library(&quot;here&quot;)</code></pre>
 ##   hgnc_symbol = col_character()
 ## )</code></pre>
 <p><br /></p>
+<pre class="r"><code>tx2geneid &lt;- id_mapping</code></pre>
 </div>
 </div>
 <div id="getting-familiar-with-the-data" class="section level2">
