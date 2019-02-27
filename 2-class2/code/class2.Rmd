@@ -48,6 +48,26 @@ These fantastic visualizations and datasets are from [here.](https://www.autodes
 
 
 ```{r setup,echo=FALSE, message=FALSE}
+
+# Trick to install packages
+
+list.of.packages <- c("here",
+                      "tidyverse",
+                      "reshape2",
+                      "ggplot2",
+                      "ggthemes",
+                      "ggrepel",
+                      "scales",
+                      "viridis",
+                      "corrplot",
+                      "pheatmap")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+
+if(length(new.packages)) install.packages(new.packages)
+
+
+
 # We need to load all the libraries we think are needed for this exercise.
 library(here) # setting wdir
 library(tidyverse) # data-warngling
