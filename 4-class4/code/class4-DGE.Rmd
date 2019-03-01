@@ -1,5 +1,5 @@
 ---
-title: "class3.Rmd"
+title: "class3-DGE.Rmd"
 author: "Sujatha Jagannathan"
 date: "February 22, 2019"
 output: html_document
@@ -9,6 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Some tutorials
+https://www.youtube.com/watch?v=5tGCBW3_0IA
+https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
+
 ## 1. Preparing R
 Load packages  
 ```{r, include = TRUE, warning=FALSE, message=FALSE}
@@ -16,6 +20,7 @@ library("tidyverse")
 library("skimr")
 library("here")
 library("edgeR")
+library("dplyr")
 ```
 This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.
 
@@ -32,87 +37,67 @@ data_gene_level <- read_csv(here("3-class3",
                                       "data", 
                                      "input",
                                      "data_gene-level.csv"))
-
-load(here("3-class3", 
-          "data", 
-          "input",
-          "id2genes.Rdata"))
-
 ```
 
 ## 3. Prepare data
 ```{r}
-geneExpr_new <- data_gene_level %>% 
-                  select(-X1, -hgnc_symbol) %>%
-                  rename(id = ensembl_gene_id) %>%
-                  filter(!is.na(id))
+geneExpr <- data_gene_level %>% #pipe data to next step
+                  select(-X1, -hgnc_symbol) %>% #Remove row# column and gene symbol
+                  rename(id = ensembl_gene_id) %>% #rename the ensembl_gene_id to id
+                  filter(!is.na(id)) # remove rows with no gene ids. 
 
-geneExpr_new <- data.frame(geneExpr_new)
-row.names(geneExpr_new) <- geneExpr_new$id
-x <- geneExpr_new[, c(2:13)]
-
-x_set1 <- x[, c(1:6)] #4h
-x_set2 <- x[, c(1:3, 7:9)] #8h
-x_set3 <- x[, c(1:3, 10:12)] #14h
+geneExpr <- data.frame(geneExpr) #we are converting the geneExpr tibble to a data.frame for a specific reason. Tibbles do not allow a variable to be contained in a row name. Therefore, they don't allow row names at all. But for edgeR to work, we need the count data to be in a matrix with gene names as row names and sample names as column names. 
+row.names(geneExpr) <- geneExpr$id # This is where we move the gene id information into row name
+x <- geneExpr[, c(2:13)] # then, we get rid of the column containing gene id. Thus, generating out matrix of count data. 
 ```
 
-## 4. Define the grouping
+## 4. Subset the data to the samples to be compared. 
 ```{r}
-group_set1 <- c(1, 1, 1, 2, 2, 2)
-group_set2 <- c(1, 1, 1, 2, 2, 2)
-group_set3 <- c(1, 1, 1, 2, 2, 2)
+# Subsetting the data to only consider 0 vs 14 hour for our fold-change calculations
+x_set <- x[, c(1:3, 10:12)] #14h
+
+#Note: You can create as many sets as you want for the different comparisions you want to make, such as x_set1, x_set2, and so on. Just make sure to do the following steps also for each of the sets you made.
 ```
 
-## 5. Create the design
+## 5. Define sample grouping
 ```{r}
-design_set1 <- model.matrix(~group_set1)
-design_set2 <- model.matrix(~group_set2)
-design_set3 <- model.matrix(~group_set3)
+group_set <- c(1, 1, 1, 2, 2, 2)
+
+#Note: If you made more than one sets, you need to define their grouping individually as group_set1, group_set2, etc. 
+```
+
+## 6. Create the design
+```{r}
+design_set <- model.matrix(~group_set)
+
+#Note: same as above. each set needs its own design. 
 ```
 
 ## 6. Generate a DGE list
 ```{r}
-y_set1 <- DGEList(counts=x_set1, group=group_set1)
-y_set2 <- DGEList(counts=x_set2, group=group_set2)
-y_set3 <- DGEList(counts=x_set3, group=group_set3)
+y_set <- DGEList(counts=x_set, group=group_set)
 ```
 
 ## 7. Filter genes with low counts (require >1 cpm in at least 1/2 of the samples)
 ```{r}
-keep <- rowSums(cpm(y_set1)>1) >= 3
-y1_set1 <- y_set1[keep, , keep.lib.sizes=FALSE]
-
-keep <- rowSums(cpm(y_set2)>1) >= 3
-y1_set2 <- y_set2[keep, , keep.lib.sizes=FALSE]
-
-keep <- rowSums(cpm(y_set3)>1) >= 3
-y1_set3 <- y_set3[keep, , keep.lib.sizes=FALSE]
+keep <- rowSums(cpm(y_set)>1) >= 3
+y_set <- y_set[keep, , keep.lib.sizes=FALSE]
 ```
 
 ## 8. Normalize
 ```{r}
-#d <- calcNormFactors(d)
+y1_set <- calcNormFactors(y_set)
 ```
 
 ## 9. Find differentially expressed genes
 ```{r}
 #estimate dispersion
-y2_set1 <- estimateDisp(y1_set1, design_set1)
-y2_set2 <- estimateDisp(y1_set2, design_set2)
-y2_set3 <- estimateDisp(y1_set3, design_set3) 
+y2_set <- estimateDisp(y1_set, design_set)
 
 #find DE genes
 fit_set1 <- glmFit(y2_set1, design_set1)
 lrt.2vs1_set1 <- glmLRT(fit_set1, coef=2) #coef specifies ?
 DUX4_4h <- topTags(lrt.2vs1_set1, n=10733) #n specifies number of genes to view
-
-fit_set2 <- glmFit(y2_set2, design_set2)
-lrt.2vs1_set2 <- glmLRT(fit_set2, coef=2)
-DUX4_8h <- topTags(lrt.2vs1_set2, n=10733)
-
-fit_set3 <- glmFit(y2_set3, design_set3)
-lrt.2vs1_set3 <- glmLRT(fit_set3, coef=2)
-DUX4_14h <- topTags(lrt.2vs1_set3, n=10733)
 ```
 
 ## 10. Data clean up and export
@@ -193,6 +178,6 @@ abline(lm(foldchange$hour14_logFC ~ foldchange$hour08_logFC))
 
 ## Generating UP and DOWN genes
 ```{r}
-up <- nrow(foldchange.filtered %>% filter (vDUX4_logFC > 2 & vDUX4_fdr < 0.05))
-down <- nrow(foldchange.filtered %>% filter (vDUX4_logFC < -2 & vDUX4_fdr < 0.05))
+up <- nrow(foldchange %>% filter (hour14_logFC > 2 & hour14_fdr < 0.05))
+down <- nrow(foldchange %>% filter (hour14_logFC < -2 & hour14_fdr < 0.05))
 ```

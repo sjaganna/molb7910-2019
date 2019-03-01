@@ -1,0 +1,382 @@
+---
+title: "class3-presentation"
+author: "Sujatha Jagannathan"
+date: "February 6, 2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Learning goals
+
+- Review material from class 1
+- Understand the syntax of dplyr and tidyr
+- Get comfortable with cleaning and transforming data
+- Use in-class time to work through issues and answer questions
+
+## Load packages  
+```{r, include = TRUE, warning=FALSE, message=FALSE, tidy.opts=list(width.cutoff=60)}
+library("tidyverse")
+library("skimr")
+library("here")
+library("ggplot2")
+```
+
+## Set working directory
+```{r, tidy.opts=list(width.cutoff=60)}
+here() # prints out the path that `here` points to
+setwd(here()) # set working directory to `here`  
+getwd() # get working directory
+```
+
+## Import data
+```{r}
+data_transcript <- read_csv("3-class3/data/input/data_transcript.csv")
+
+data_transcript <- read_csv(here("3-class3", "data", "input", "data_transcript.csv"))
+
+data_transcript <- read_csv("/Users/sjaganna/Desktop/CU-onedrive/OneDrive - The University of Colorado Denver/08-teaching/molb7910/3-class3/data/input/data_transcript.csv")
+```
+
+# dplyr
+
+## dplyr verbs
+
+- `select`
+- `rename`
+- `filter`
+- `arrange`
+- `count`
+- `mutate`
+- `group_by` and `summarise`
+- pipe: `%>%` 
+- ... and many others! `add_row`, `add_column`, `distinct`, `sample_n`, `sample_frac`, `slice`, `pull`
+
+## `select` and `rename`
+
+- When do you use it?
+- `select` to extract one or more columns from a table 
+- `rename` to rename columns/variables
+
+## `select`
+
+- `select()` to extract one or more column from a table 
+
+- Syntax: 
+```{}
+select(data = ..., <colname>)  
+```
+- Examples:   
+```{}
+select(data = data_transcript, hgnc_symbol)  
+select(data_transcript, -X1)
+select(data_transcript, starts_with("hour"))
+select(data_transcript, hour00_rep1:hour14_rep3)
+select(data_transcript, contains("ensembl"))
+select(data_transcript, ends_with("rep2"))
+select(data_transcript, dux4_target, everything())
+```
+
+## `select_if`
+
+- `select_if()` to extract all columns of a particular type
+
+- Example:
+```{}
+select_if(data_transcript, is.numeric)
+select_if(data_transcript, is.logical)
+select_if(data_transcript, is.character)
+```
+
+## `rename`
+
+- `rename()` renames the variables in a table. Keeps all columns. `select()` can also do this, but with some caveats. 
+
+- Syntax
+```{}
+rename(data = ..., <colname>)
+```
+
+- Examples:
+```{}
+rename(data_transcript, rownum = X1)
+select(data_transcript, rownum = X1)
+select(data_transcript, rownum = X1, everything())
+```
+
+## `filter`, `arrange`, and `count`
+
+- When do you use it?
+- `filter` to extract rows that meet a logical criteria. 
+- `arrange` to order rows by values of one or more columns. 
+- `count` to count the number of rows in which a value occurs within a column
+
+## `filter`
+
+- `filter()` chooses rows/cases where conditions are true.
+
+- Syntax
+```{}
+filter(data = ..., <condition>)
+```
+
+- Examples:
+```{}
+filter(data_transcript, hgnc_symbol == "RPL28")
+filter(data_transcript, hgnc_symbol %in% c("RPL28", "RPS3"))
+filter(data_transcript, hour14_rep1 > 1000)
+filter(data_transcript, hour14_rep1 > 1000 & hour14_rep2 > 1000)
+filter(data_transcript, hour14_rep1 > 1000 | hour14_rep2 > 1000)
+```
+
+## `arrange`
+
+- `arrange()` to order rows by values of a column or columns (low to high). `desc()` orders high to low. 
+
+- Syntax
+```{}
+arrange(data = ..., <colname>)
+```
+
+- Examples:
+```{}
+arrange(data_transcript, dux4_target)
+arrange(data_transcript, hour14_rep1)
+arrange(data_transcript, dux4_target, hour14_rep1)
+arrange(data_transcript, dux4_target, desc(hour14_rep1))
+glimpse(arrange(data_transcript, dux4_target, desc(hour14_rep1)))
+```
+
+## `count`
+
+- `count()` counts number of rows in each group defined by the specified variable.  
+
+- Syntax
+```{}
+count(data = ..., <colname>)
+```
+
+- Examples:
+```{}
+count(data_transcript, dux4_target)
+count(data_transcript, hgnc_symbol)
+count(data_transcript, Length)
+```
+
+## `mutate`
+
+- When do you use it?
+- Use `mutate` to compute new columns and to transform existing columns. 
+
+## `mutate` {.smaller}
+
+- `mutate()` to compute new columns
+
+- Syntax
+```{}
+mutate(data = ..., <newcolname> =  funs(<oldcolname>))
+mutate(data = ..., <colname>, funs(x))
+```
+
+- Examples:
+```{}
+mutate(data_transcript, hour14 = (hour14_rep1 + hour14_rep2 + hour14_rep3)/3)
+glimpse(mutate(data_transcript, hour14 = (hour14_rep1 + hour14_rep2 + hour14_rep3)/3))
+mutate_at(data_transcript, vars(hour00_rep3), funs(log(.)))
+mutate_if(data_transcript, is.numeric, funs(log(.)))
+mutate_at(data_transcript, vars(starts_with("hour")), funs(log(.)))
+```
+Many other vector functions can be used with `mutate()` to compute new columns. Refer to cheatsheet. 
+
+## `group_by` and `summarise`
+
+- When do you use it?
+- Use `group_by` to create a grouped copy of the table and `summarise` to then manipulate values within each group separately and then combine the results. 
+
+## `group_by`
+
+- `group_by()` to create a grouped copy of a table. 
+
+- Syntax
+```{}
+group_by(data = ..., <colname>)
+```
+
+- Examples:
+```{}
+group_by(data_transcript, dux4_target)
+group_by(data_transcript, hgnc_symbol)
+```
+
+## `summarise`
+
+- `summarise()`  to create a new summary statistic
+
+- Syntax
+```{}
+summarise(data = ..., <colname>)
+```
+
+- Examples:
+```{}
+summarise(data_transcript, mean_length = mean(Length))
+summarise(data_transcript, hour00_rep1 = mean(hour00_rep1))
+summarise_if(data_transcript, is.numeric, funs(mean(.)))
+```
+Many other summary functions can be used with `summarise()` to compute new columns. Refer to cheatsheet. 
+
+## `group_by` + `summarise`  {.smaller}
+
+- Syntax
+```{}
+group_by(data = ..., <colname>) %>% summarise()
+```
+
+- Examples:
+```{}
+group_by(data_transcript, hgnc_symbol) %>% summarise(mean_length = mean(Length))
+summarise(data_transcript, mean_length = mean(Length))
+group_by(data_transcript, hgnc_symbol) %>% summarise_if(is.numeric, funs(mean(.)))
+```
+
+# Combining tables with dplyr
+
+## Combine tables
+- Combine variables (i.e. columns)
+    + `bind_cols()`
+    + `left_join()`
+    + `right_join()`
+    + `inner_join()`
+    + `full_join()`
+    
+- Combine cases (i.e. rows)
+    + `bind_rows()`
+    + `intersect()`
+    + `setdiff()`
+    + `union()`
+  
+## Combine columns
+
+- `bind_cols()` to paste tables beside each other
+
+- Syntax: 
+```{}
+bind_cols(data1, data2)
+```
+- Examples:   
+
+```{}  
+data1 <- select(data_transcript, hgnc_symbol, 
+                  ensembl_gene_id, ensembl_transcript_id)
+data2 <- select(data_transcript, -hgnc_symbol, -ensembl_gene_id)
+glimpse(data1)
+glimpse(data2)
+
+#looks good!  
+
+data3 <- bind_cols(data1, data2)
+```
+  
+## Combine columns {.smaller}
+
+- `left_join()` to join matching values from the right dataset to the left dataset
+
+- Syntax: 
+
+```{}
+left_join(data1, data2)
+left_join(data1, data2, by = ...)
+left_join(data1, data2, by = c("col1" = "col2"))
+```
+- Examples:   
+
+```{}  
+data1 <- data1[c(1:8),] #dropping some rows
+glimpse(data1)
+data2 <- data2[c(3:15), ] #dropping some rows
+glimpse(data2)
+
+data3 <- left_join(data1, data2)
+data4 <- right_join(data1, data2)
+data5 <- inner_join(data1, data2)
+data6 <- full_join(data1, data2)
+```  
+
+## Combine rows
+
+- `bind_rows()` to paste tables below each other as they are. 
+
+- More Examples:   
+
+```{}  
+data1 <- data_transcript[c(1:8), ] # subset of data_transcript
+data2 <- data_transcript[c(8:18), ] # a different subset of data_transcript
+
+data3 <- bind_rows(data1, data2)
+```
+
+## Combine rows
+
+- `intersect()` to find rows that appear in both tables. 
+
+- Syntax: 
+
+```{}
+intersect(data1, data2)
+```
+- Examples:   
+
+```{}
+data4 <- intersect(data1, data2)
+data5 <- setdiff(data1, data2) # rows that appear in x, but not y
+data6 <- setdiff(data2, data1) # flip by reversing the order of datasets
+data7 <- union(data1, data2) # rows that appear in x or y
+```
+
+# tidyr
+
+## tidyr verbs
+
+- `spread`
+- `gather`
+- `separate`
+- `unite`
+
+## `spread` & `gather`
+
+- When do you use it?
+- When you want to change the **shape** of your data. 
+
+## `spread`
+
+- `spread()` takes two columns (key & value), and spreads into multiple columns: it makes “long” data wider
+- Syntax: spread(data = ..., key = ..., value = ...)
+- Example: 
+
+## `gather`
+
+- `gather()`  takes multiple columns, and gathers them into key-value pairs: it makes “wide” data longer
+- Syntax: gather(data = ..., key = ..., value = ..., <columns-to-gather>)
+
+## `separate` & `unite`
+
+- When do you use it?
+- When you want to split or combine the **contents** of a cell in your data. 
+
+## `separate`
+
+- `separate()` turns a single character column into multiple columns by splitting the values of the column wherever a separator character appears.
+- Syntax: separate(data = ..., col = ..., into = ..., sep = ...)
+
+## `unite`
+
+- `unite()` combines multiple columns into a single column.
+- Syntax: unite(data = ..., col = ..., <columns-to-unite>, sep = ...)
+
+# Your turn {.biggest}
+
+## Acknowledgements
+
+Most images, especially the cheat sheets, are from www.rstudio.com

@@ -1,0 +1,107 @@
+---
+title: "class3-homework.Rmd"
+author: "Sujatha Jagannathan"
+date: "February 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
+```
+
+#### 1. Load packages 
+Packages: `tidyverse`, `skimr`, `here`, and `ggplot2` 
+```{r, include = TRUE}
+
+
+```
+
+#### 2. Set working directory
+```{r}
+
+
+```
+
+#### 3. Import data
+Path: "3-class3/data/input/data_transcript.csv""
+```{r}
+
+
+```
+
+#### 4. select
+
+1. Select the columns `hgnc_symbol`, `hour00_rep1`, and `hour14_rep1`; `glimpse` the resulting table.
+
+```{r}
+
+
+```
+
+2. Select all columns except `Length`; `glimpse` the resulting table.
+
+```{r}
+
+```
+
+#### 5. filter
+
+1. Filter rows based on length of transcript > 1000; `glimpse` the resulting table. 
+
+```{r}
+
+
+```
+
+2. Filter rows based on hour14_rep1 > 5000; `glimpse` the resulting table.
+
+```{r}
+
+
+```
+
+#### 5. select & filter
+
+`select` all columns except for `X1` and then pipe the output to `filter` to only retain rows where the `sum` of counts from the three hour00 replicates is > 20. `glimpse` the resulting table. 
+
+```{r}
+
+```
+
+#### 6. mutate
+
+Add a pseudocount of 10 to the counts from all time points and replicates. `glimpse` the resulting table.
+
+```{r}
+
+```
+
+#### 7. select, filter, and mutate
+
+Select all columns except `X1`, filter rows based on hour14_rep1 > 5000; mutate by taking log10 of all count data (4 time points, 3 replicates). 
+
+```{r}
+
+```
+
+#### 8. group_by and summarise
+
+Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`. 
+
+```{r}
+
+```
+
+#### 9. select, group_by, summarise, mutate and filter
+
+Select all columns except `X1`; Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`; mutate by taking log10 of all count sums (4 time points, 3 replicates); 
+
+```{r}
+
+```
+
+#### 10. Print sessionInfo {.smallest}
+
+```{r}
+
+```
