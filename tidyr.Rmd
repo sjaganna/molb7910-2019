@@ -1,0 +1,52 @@
+---
+title: "tidy"
+author: "Sujatha Jagannathan"
+date: "February 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# tidyr
+
+## tidyr verbs
+
+- `spread`
+- `gather`
+- `separate`
+- `unite`
+
+## `spread` & `gather`
+
+- When do you use it?
+- When you want to change the **shape** of your data. 
+
+## `spread`
+
+- `spread()` takes two columns (key & value), and spreads into multiple columns: it makes “long” data wider
+- Syntax: spread(data = ..., key = ..., value = ...)
+- Example: 
+
+## `gather`
+
+- `gather()`  takes multiple columns, and gathers them into key-value pairs: it makes “wide” data longer
+- Syntax: gather(data = ..., key = ..., value = ..., <columns-to-gather>)
+
+## `separate` & `unite`
+
+- When do you use it?
+- When you want to split or combine the **contents** of a cell in your data. 
+
+## `separate`
+
+- `separate()` turns a single character column into multiple columns by splitting the values of the column wherever a separator character appears.
+- Syntax: separate(data = ..., col = ..., into = ..., sep = ...)
+
+## `unite`
+
+- `unite()` combines multiple columns into a single column.
+- Syntax: unite(data = ..., col = ..., <columns-to-unite>, sep = ...)
+
+# Your turn {.biggest}
