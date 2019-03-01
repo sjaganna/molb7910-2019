@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Learning goals
 
 - Review material from class 1
-- Understand the syntax of dplyr and tidyr
+- Understand the syntax of dplyr verbs and learn to use them
 - Get comfortable with cleaning and transforming data
 - Use in-class time to work through issues and answer questions
 
@@ -335,48 +335,8 @@ data6 <- setdiff(data2, data1) # flip by reversing the order of datasets
 data7 <- union(data1, data2) # rows that appear in x or y
 ```
 
-# tidyr
+## SessionInfo
 
-## tidyr verbs
-
-- `spread`
-- `gather`
-- `separate`
-- `unite`
-
-## `spread` & `gather`
-
-- When do you use it?
-- When you want to change the **shape** of your data. 
-
-## `spread`
-
-- `spread()` takes two columns (key & value), and spreads into multiple columns: it makes “long” data wider
-- Syntax: spread(data = ..., key = ..., value = ...)
-- Example: 
-
-## `gather`
-
-- `gather()`  takes multiple columns, and gathers them into key-value pairs: it makes “wide” data longer
-- Syntax: gather(data = ..., key = ..., value = ..., <columns-to-gather>)
-
-## `separate` & `unite`
-
-- When do you use it?
-- When you want to split or combine the **contents** of a cell in your data. 
-
-## `separate`
-
-- `separate()` turns a single character column into multiple columns by splitting the values of the column wherever a separator character appears.
-- Syntax: separate(data = ..., col = ..., into = ..., sep = ...)
-
-## `unite`
-
-- `unite()` combines multiple columns into a single column.
-- Syntax: unite(data = ..., col = ..., <columns-to-unite>, sep = ...)
-
-# Your turn {.biggest}
-
-## Acknowledgements
-
-Most images, especially the cheat sheets, are from www.rstudio.com
+```{r}
+sessionInfo()
+```
