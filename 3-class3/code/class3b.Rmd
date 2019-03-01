@@ -1,0 +1,267 @@
+---
+title: "Class 3b: ggplot2 revisited"
+author: "Neelanjan Mukherjee"
+date: "2/12/2019"
+output: html_document
+---
+```{r , include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+
+
+```{r setup,echo=FALSE, message=FALSE}
+
+
+# We need to load all the libraries we think are needed for this exercise.
+library(here) # setting wdir
+library(tidyverse) # data-warngling
+library(reshape2) # converting data from wide-to-long and long-to-wide
+library(ggplot2) # plotting
+library(ggthemes) # pretty plotting themes
+library(scales) # nice annotating of x/y axes in plots
+# install.packages("cowplot")
+library(cowplot) # nice plots
+```
+
+
+
+```{r tidy data}
+
+# set your working directory
+setwd("~/Documents/molb7910-master/")
+
+# read in dux data
+dux_data <- read_csv(file ="3-class3/data/data_transcript.csv")
+
+# remove the first column of `dux_data`
+dux_data <- dux_data[,-1]
+
+# let's see what is in dux data
+names(dux_data)
+
+# sum of counts for all transcrips of a given gene
+dux_gene <- dux_data %>% select(hgnc_symbol, dux4_target, hour00_rep1:hour14_rep3) %>% group_by(hgnc_symbol,dux4_target) %>% summarise_all(funs(sum))
+
+
+# let's log transform all counts data
+# dux_log <- dux_gene %>%  mutate_at(.funs = funs(log = log10(. + 1)), .vars = vars(hour00_rep1:hour14_rep3)) %>% select(hgnc_symbol, dux4_target, hour00_rep1_log:hour14_rep3_log)
+
+
+# ok now lets convert from wide-to-long
+long_dux <- melt(dux_gene)
+colnames(long_dux) <- c("gene","target","time","counts")
+
+# i want a column for time and a separate one for replicate
+long_dux_plot <- long_dux %>% separate(col = time, into = c("time","rep"))
+
+
+```
+
+
+## 1. Plotting data with ggplot2 
+
+A popular approach to plotting in R is [ggplot2](https://ggplot2.tidyverse.org/). While graphs produced using ggplot2 defaults are (imo) not quite publication qualitym with a few tweaks you can pretty much get there! I find [STHDA](http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization) to be a great resource for `ggplot2` and many other `R` coding questions.
+
+*** 
+### A. The basic syntax of `ggplot()`  
+
+`ggplot()`: build plots piece by piece
+The concept of ggplot divides a plot into three different fundamental parts:
+
+plot = __data__ + __aesthetics__ + __geometry__.  
+<br/>
+__data__: a data frame
+<br/>
+__aesthetics__: specify x and y variables, and other features - color, size, shape, etc.
+<br/>
+__geometry__: specify type of plots  - histogram, boxplot, line, density, dotplot, bar, etc. 
+<br/>
+
+
+### B. Producing different types of plots
+    + Histograms and density plots
+    + Scatter plots
+    + Box-, violin-, and jitter-plots
+    
+### C. Additional considerations
+    + Multiple plots
+    + Themes
+    + Titles, axes, and legends
+    + Colors
+    + Scales
+
+
+
+
+
+
+### Exammple: making jitter plot step-by-step
+We will make a variety of jitter plots now. Please see this [webpage](http://www.sthda.com/english/wiki/ggplot2-stripchart-jitter-quick-start-guide-r-software-and-data-visualization) for more information.
+
+```{r jitter}
+# we will use long_dux_plot, let's take a peak
+head(long_dux_plot)
+
+# basic plot
+ggplot(data = long_dux_plot, aes(x = time, y = counts )) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter() # `geom` is 'geom_jitter()'
+
+# tighten jitter
+ggplot(data = long_dux_plot, aes(x = time, y = counts )) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.25) # `geom` is 'geom_jitter()'
+
+# tighten jitter more - ahhh, thats better!
+ggplot(data = long_dux_plot, aes(x = time, y = counts )) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) # `geom` is 'geom_jitter()'
+
+# let's log that y-axis
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() # make y-axis log10
+
+# Neel has been so patient, let's make him happy and change the theme
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() # my go-to theme
+
+# sooo many themes
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_fivethirtyeight() # hard not to like Nate Silver + Co.
+
+
+# Neel has been so patient, let's make him happy and change the theme
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() # my go-to theme
+
+# let's be good scientists and add a title
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") # title
+
+
+# how to modify axis labels
+ggplot(data = long_dux_plot, aes(x = time, y = counts)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+# now let's color by the dux4 target
+ggplot(data = long_dux_plot, aes(x = time, y = counts, color = target)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts', `color` by 'target'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+# not bad, but which genes are which!!
+ggplot(data = long_dux_plot, aes(x = time, y = counts, color = target, shape = gene)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts', `color` by 'target', `shape` is 'gene'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+# ggplot was displeased because it doesn't have enough shapes!!
+# let's swap target and gene
+ggplot(data = long_dux_plot, aes(x = time, y = counts, color = gene, shape = target)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts', `color` by 'target', `shape` is 'gene'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+
+
+# this is annoying to look at
+```
+
+
+Now we will go more deeply into options with `ggplot2` that require creating a `ggplot2` object. We will also explore `facet_wrap()` which is a very useful tool.
+
+```{r round two jitter}
+# time for a new powerful trick called the `facet-wrap`
+# but before we do this let's talk about making ggplot2 objects
+# lets take the second to last plot we made and assign it to `p`
+
+p_target <- ggplot(data = long_dux_plot, aes(x = time, y = counts, color = target)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts', `color` by 'target'
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+p_target # prints plot
+
+names(p_target) # what is in the object?
+
+p_target$data # i can get the data back
+
+p_target$mapping # my aesthetics
+
+p_target$theme # that is way too much stuff!
+
+p_target$labels # i see my labels
+
+
+# remember 'p-target'
+p_target
+
+# let's say I want to make a separate `p_target`  plot for each gene
+p_target + facet_wrap(gene ~ .) # `facet_wrap` gene 
+
+# let's fix x-axis
+p_target + facet_wrap(~gene) + # `facet_wrap` by gene 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # angle 60 degree
+
+p_target + facet_wrap(~target) + # `facet_wrap` by target 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # angle 60 degree
+
+p_target + facet_wrap(target~gene) + # `facet_wrap` target by gene
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # angle 60 degree
+
+
+p_gene <- ggplot(data = long_dux_plot, aes(x = time, y = counts, color = gene)) +  # `data` is 'long_dux_plot', `x` is 'time', `y` is 'counts', `color` by gene
+  geom_jitter(width = 0.1) + # `geom` is 'geom_jitter()'
+  scale_y_log10() + # make y-axis log10
+  theme_few() + # my go-to theme
+  ggtitle("jitterplot  into my heart..") + # title
+  ylab(label = "I love counts") + # my new y-axis name
+  xlab(label = "Hear DUX4 Roar")  # my new x-axis name
+
+p_gene_target <- p_gene + facet_wrap(~target) + # `facet_wrap` target 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # angle 60 degree
+p_target_gene <- p_target + facet_wrap(~gene) + # `facet_wrap` by gene 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) # angle 60 degree
+
+
+p_final <- plot_grid(p_gene_target, p_target_gene, labels = c("A","B"), nrow = 2)
+
+
+save_plot(filename = "../images/final_plot.png", plot = p_final)
+```
+
+
+
+Finally, we will __always__ end our Rmarkdown documents with the sessing information:
+
+```{r}
+sessionInfo()
+```
+
+
