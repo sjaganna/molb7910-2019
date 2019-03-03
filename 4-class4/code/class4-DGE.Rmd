@@ -114,7 +114,7 @@ design <- model.matrix(~group)
 # 7. estimate dispersion
 d <- estimateDisp(d, design)
 
-# 8. Fit a generalized linear model 
+# 8. Fit a generalized linear model (for RNA-seq count data, this is a negative binomial generalized log-linear model. More info in the reference. )
 d1 <- glmFit(d, design)
 
 # 9. Conduct Tagwise likelihood ratio tests for DGEGLM
@@ -148,3 +148,4 @@ sessionInfo()
 Youtube video on edgeR: https://www.youtube.com/watch?v=5tGCBW3_0IA  
 edgeR tutorial 1: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
 edgeR tutorial 2: https://gist.github.com/jdblischak/11384914
+GLM for RNA-seq data: https://bioramble.wordpress.com/2016/01/30/why-sequencing-data-is-modeled-as-negative-binomial/

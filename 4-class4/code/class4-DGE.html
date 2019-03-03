@@ -300,7 +300,7 @@ design &lt;- model.matrix(~group)
 # 7. estimate dispersion
 d &lt;- estimateDisp(d, design)
 
-# 8. Fit a generalized linear model 
+# 8. Fit a generalized linear model (for RNA-seq count data, this is a negative binomial generalized log-linear model. More info in the reference. )
 d1 &lt;- glmFit(d, design)
 
 # 9. Conduct Tagwise likelihood ratio tests for DGEGLM
@@ -361,7 +361,7 @@ foldchange &lt;- left_join(data_gene_level, foldchange_hour14, by = c(&quot;ense
 <div id="references" class="section level4">
 <h4>References</h4>
 <p>Youtube video on edgeR: <a href="https://www.youtube.com/watch?v=5tGCBW3_0IA" class="uri">https://www.youtube.com/watch?v=5tGCBW3_0IA</a><br />
-edgeR tutorial 1: <a href="https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html" class="uri">https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html</a> edgeR tutorial 2: <a href="https://gist.github.com/jdblischak/11384914" class="uri">https://gist.github.com/jdblischak/11384914</a></p>
+edgeR tutorial 1: <a href="https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html" class="uri">https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html</a> edgeR tutorial 2: <a href="https://gist.github.com/jdblischak/11384914" class="uri">https://gist.github.com/jdblischak/11384914</a> GLM for RNA-seq data: <a href="https://bioramble.wordpress.com/2016/01/30/why-sequencing-data-is-modeled-as-negative-binomial/" class="uri">https://bioramble.wordpress.com/2016/01/30/why-sequencing-data-is-modeled-as-negative-binomial/</a></p>
 </div>
 </div>
 

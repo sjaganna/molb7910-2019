@@ -4,6 +4,8 @@ author: "Sujatha Jagannathan"
 date: "February 28, 2019"
 output: html_document
 ---
+<br/>
+
 The goal of this homework is to get comfortable combining `dplyr` verbs to transform data and then to plot it using `ggplot`. 
 
 Please execute the following tasks, knit the resulting .Rmd (Lastname_class4-homework.Rmd) and submit the .html output as your assignment.
@@ -12,6 +14,8 @@ Please execute the following tasks, knit the resulting .Rmd (Lastname_class4-hom
 knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
 ```
 
+<br/>
+
 #### 1. Load packages 
 Packages: `tidyverse`, `skimr`, `here`, and `ggplot2` 
 ```{r, include = TRUE}
@@ -19,11 +23,15 @@ Packages: `tidyverse`, `skimr`, `here`, and `ggplot2`
 
 ```
 
+<br/>
+
 #### 2. Set working directory
 ```{r}
 #setwd/here
 
 ```
+
+<br/>
 
 #### 3. Import data
 Path: "4-class4/data/output/data_foldchange.csv"
@@ -32,28 +40,81 @@ Path: "4-class4/data/output/data_foldchange.csv"
 
 ```
 
-#### 4. select, group_by, summarise, mutate and filter
+<br/>
 
-Goal: 
+#### 4. Conduct edgeR analysis for the 4h and 8h samples, using the 0h sample as the control sample. 
+Follow the same steps 1-10 we used for the 14h sample in our class. Note that the only changes you will make to this pipeline is to subset the geneExpr dataframe differently (step #1) and to save the final foldchange data with the appropriate name (step #10). 
 
-Pseudocode:
-
-Actual code: 
 ```{r}
-#select, group_by, summarise, mutate and filter
+# edgeR analysis for 4h sample. Assign foldchange data to -> foldchange_hour04
+
+# edgeR analysis for 8h sample. Assign foldchange data to -> foldchange_hour08
 
 ```
 
-#### 5. ggplot
+<br/>
 
-Goal:
+#### 5. Prepare all of the foldchange data for plotting. 
 
-Pseudocode:
+**Goal**:   
 
-Actual code: 
+1. Get rid of the X1 column from `data_foldchange`.   
+
+2. Combine the `data_foldchange` data with `foldchange_hour04` and `foldchange_hour08`.  
+
+3. Rename the columns to make sure they reflect the time points appropriately. (i.e. logFC -> logFC_hour04 or logFC_hour08 or logFC_hour14).   
+
+4. Create a subset of the data (`data_sub`) containing just the following genes and only the columns corresponding to `hgnc_symbol`, and the three logFC values (4h, 8h, 14h): 
+    - targets <- ZSCAN4, KHDC1L, RFPL1, DUXA, CCNA1, CLK1
+    - nontargets <- RPS14, RPS3, RPL36, RPL28
+Sanity check: You should have a dataframe of four columns and 10 rows.   
+
+5. Add a new column of a categorial variable of dux4_target status (TRUE or FALSE) based on the information in #4 (Hint: there are *MANY* right ways to do this; Sanity check: Now you should have a dataframe of five columns and 10 rows)  
+
+6. Melt the above dataframe (5x10) to enable future plotting and assign it to `data_sub_long`.   
+
+**Pseudocode**:  
+1.   
+2.   
+3.   
+4.   
+5.   
+6.   
+
+**Actual code**: 
+```{r}
+
+```
+
+<br/>
+
+#### 6. Create the following plots to explore our data  
+
+**Goal**:   
+
+1. M-A plot for the three time points. (M or log ratio here is`logFC`, and A or mean average here is `logCPM`)  
+
+2. Volcano plot for the three time points. (Volcano plot is `logFC` vs. -log10 of `FDR`)  
+
+3. Heatmap of log2 ratios for the three comparisions.   
+
+4. Remake the volcano plot highlighting the six DUX4 target genes in one color and the four nontargets in another color.   
+
+5. Using `data_sub_long`, create line plots for the fold changes (4h, 8h, and 14h) for the six DUX4 targets and the four nontargets. Color the lines by the dux4 target status.  
+
+**Pseudocode**:  
+1.   
+2.   
+3.   
+4.   
+5.   
+
+**Actual code**: 
 ```{r}
 # plot
 ```
+
+<br/>
 
 #### 6. Print sessionInfo {.smallest}
 

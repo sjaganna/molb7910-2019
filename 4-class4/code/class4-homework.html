@@ -192,35 +192,79 @@ $(document).ready(function () {
 </div>
 
 
+<p><br /></p>
 <p>The goal of this homework is to get comfortable combining <code>dplyr</code> verbs to transform data and then to plot it using <code>ggplot</code>.</p>
 <p>Please execute the following tasks, knit the resulting .Rmd (Lastname_class4-homework.Rmd) and submit the .html output as your assignment.</p>
+<p><br /></p>
 <div id="load-packages" class="section level4">
 <h4>1. Load packages</h4>
 <p>Packages: <code>tidyverse</code>, <code>skimr</code>, <code>here</code>, and <code>ggplot2</code></p>
 <pre class="r"><code>#load packages here</code></pre>
+<p><br /></p>
 </div>
 <div id="set-working-directory" class="section level4">
 <h4>2. Set working directory</h4>
 <pre class="r"><code>#setwd/here</code></pre>
+<p><br /></p>
 </div>
 <div id="import-data" class="section level4">
 <h4>3. Import data</h4>
 <p>Path: “4-class4/data/output/data_foldchange.csv”</p>
 <pre class="r"><code>#import data</code></pre>
+<p><br /></p>
 </div>
-<div id="select-group_by-summarise-mutate-and-filter" class="section level4">
-<h4>4. select, group_by, summarise, mutate and filter</h4>
-<p>Goal:</p>
-<p>Pseudocode:</p>
-<p>Actual code:</p>
-<pre class="r"><code>#select, group_by, summarise, mutate and filter</code></pre>
+<div id="conduct-edger-analysis-for-the-4h-and-8h-samples-using-the-0h-sample-as-the-control-sample." class="section level4">
+<h4>4. Conduct edgeR analysis for the 4h and 8h samples, using the 0h sample as the control sample.</h4>
+<p>Follow the same steps 1-10 we used for the 14h sample in our class. Note that the only changes you will make to this pipeline is to subset the geneExpr dataframe differently (step #1) and to save the final foldchange data with the appropriate name (step #10).</p>
+<pre class="r"><code># edgeR analysis for 4h sample. Assign foldchange data to -&gt; foldchange_hour04
+
+# edgeR analysis for 8h sample. Assign foldchange data to -&gt; foldchange_hour08</code></pre>
+<p><br /></p>
 </div>
-<div id="ggplot" class="section level4">
-<h4>5. ggplot</h4>
-<p>Goal:</p>
-<p>Pseudocode:</p>
-<p>Actual code:</p>
+<div id="prepare-all-of-the-foldchange-data-for-plotting." class="section level4">
+<h4>5. Prepare all of the foldchange data for plotting.</h4>
+<p><strong>Goal</strong>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Get rid of the X1 column from <code>data_foldchange</code>.</p></li>
+<li><p>Combine the <code>data_foldchange</code> data with <code>foldchange_hour04</code> and <code>foldchange_hour08</code>.</p></li>
+<li><p>Rename the columns to make sure they reflect the time points appropriately. (i.e. logFC -&gt; logFC_hour04 or logFC_hour08 or logFC_hour14).</p></li>
+<li>Create a subset of the data (<code>data_sub</code>) containing just the following genes and only the columns corresponding to <code>hgnc_symbol</code>, and the three logFC values (4h, 8h, 14h):
+<ul>
+<li>targets &lt;- ZSCAN4, KHDC1L, RFPL1, DUXA, CCNA1, CLK1</li>
+<li>nontargets &lt;- RPS14, RPS3, RPL36, RPL28 Sanity check: You should have a dataframe of four columns and 10 rows.</li>
+</ul></li>
+<li><p>Add a new column of a categorial variable of dux4_target status (TRUE or FALSE) based on the information in #4 (Hint: there are <em>MANY</em> right ways to do this; Sanity check: Now you should have a dataframe of five columns and 10 rows)</p></li>
+<li><p>Melt the above dataframe (5x10) to enable future plotting and assign it to <code>data_sub_long</code>.</p></li>
+</ol>
+<p><strong>Pseudocode</strong>:<br />
+1.<br />
+2.<br />
+3.<br />
+4.<br />
+5.<br />
+6.</p>
+<p><strong>Actual code</strong>:</p>
+<p><br /></p>
+</div>
+<div id="create-the-following-plots-to-explore-our-data" class="section level4">
+<h4>6. Create the following plots to explore our data</h4>
+<p><strong>Goal</strong>:</p>
+<ol style="list-style-type: decimal">
+<li><p>M-A plot for the three time points. (M or log ratio here is<code>logFC</code>, and A or mean average here is <code>logCPM</code>)</p></li>
+<li><p>Volcano plot for the three time points. (Volcano plot is <code>logFC</code> vs. -log10 of <code>FDR</code>)</p></li>
+<li><p>Heatmap of log2 ratios for the three comparisions.</p></li>
+<li><p>Remake the volcano plot highlighting the six DUX4 target genes in one color and the four nontargets in another color.</p></li>
+<li><p>Using <code>data_sub_long</code>, create line plots for the fold changes (4h, 8h, and 14h) for the six DUX4 targets and the four nontargets. Color the lines by the dux4 target status.</p></li>
+</ol>
+<p><strong>Pseudocode</strong>:<br />
+1.<br />
+2.<br />
+3.<br />
+4.<br />
+5.</p>
+<p><strong>Actual code</strong>:</p>
 <pre class="r"><code># plot</code></pre>
+<p><br /></p>
 </div>
 <div id="print-sessioninfo" class="section level4 smallest">
 <h4>6. Print sessionInfo</h4>
