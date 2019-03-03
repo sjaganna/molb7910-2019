@@ -4,6 +4,9 @@ author: "Sujatha Jagannathan"
 date: "February 28, 2019"
 output: html_document
 ---
+The goal of this homework is to get comfortable using and combining dplyr verbs to transform data. 
+
+Please execute the following tasks, knit the resulting .Rmd (Lastname_class3-homework.Rmd) and submit the .html output as your assignment.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
@@ -12,20 +15,20 @@ knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
 #### 1. Load packages 
 Packages: `tidyverse`, `skimr`, `here`, and `ggplot2` 
 ```{r, include = TRUE}
-
+#load packages here
 
 ```
 
 #### 2. Set working directory
 ```{r}
-
+#setwd/here
 
 ```
 
 #### 3. Import data
 Path: "3-class3/data/input/data_transcript.csv""
 ```{r}
-
+#import data
 
 ```
 
@@ -34,14 +37,14 @@ Path: "3-class3/data/input/data_transcript.csv""
 1. Select the columns `hgnc_symbol`, `hour00_rep1`, and `hour14_rep1`; `glimpse` the resulting table.
 
 ```{r}
-
+#select1
 
 ```
 
 2. Select all columns except `Length`; `glimpse` the resulting table.
 
 ```{r}
-
+#select2
 ```
 
 #### 5. filter
@@ -49,14 +52,14 @@ Path: "3-class3/data/input/data_transcript.csv""
 1. Filter rows based on length of transcript > 1000; `glimpse` the resulting table. 
 
 ```{r}
-
+#filter1
 
 ```
 
 2. Filter rows based on hour14_rep1 > 5000; `glimpse` the resulting table.
 
 ```{r}
-
+#filter2
 
 ```
 
@@ -65,6 +68,7 @@ Path: "3-class3/data/input/data_transcript.csv""
 `select` all columns except for `X1` and then pipe the output to `filter` to only retain rows where the `sum` of counts from the three hour00 replicates is > 20. `glimpse` the resulting table. 
 
 ```{r}
+#select & filter
 
 ```
 
@@ -73,35 +77,40 @@ Path: "3-class3/data/input/data_transcript.csv""
 Add a pseudocount of 10 to the counts from all time points and replicates. `glimpse` the resulting table.
 
 ```{r}
+#mutate
 
 ```
 
 #### 7. select, filter, and mutate
 
-Select all columns except `X1`, filter rows based on hour14_rep1 > 5000; mutate by taking log10 of all count data (4 time points, 3 replicates). 
+Select all columns except `X1`, filter rows based on hour14_rep1 > 5000; mutate by taking log10 of all count data (4 time points, 3 replicates). `glimpse` the resulting table. 
 
 ```{r}
+#select, filter, and mutate
 
 ```
 
 #### 8. group_by and summarise
 
-Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`. 
+Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`. `glimpse` the resulting table. 
 
 ```{r}
+#group_by and summarise
 
 ```
 
 #### 9. select, group_by, summarise, mutate and filter
 
-Select all columns except `X1`; Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`; mutate by taking log10 of all count sums (4 time points, 3 replicates); 
+Select all columns except `X1`; Group rows by `hgnc_symbol` and summarise each of the count data (4 time points and 3 replicates) via `sum`; mutate by taking log10 of all count sums (4 time points, 3 replicates); `glimpse` the resulting table. 
 
 ```{r}
+#select, group_by, summarise, mutate and filter
 
 ```
 
 #### 10. Print sessionInfo {.smallest}
 
 ```{r}
+#sessionInfo
 
 ```

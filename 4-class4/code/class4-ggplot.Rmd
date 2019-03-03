@@ -1,5 +1,5 @@
 ---
-title: "Class 3b: ggplot2 revisited"
+title: "Class 4: ggplot2 revisited"
 author: "Neelanjan Mukherjee"
 date: "2/12/2019"
 output: html_document
@@ -7,7 +7,6 @@ output: html_document
 ```{r , include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
-
 
 
 
@@ -30,10 +29,11 @@ library(cowplot) # nice plots
 ```{r tidy data}
 
 # set your working directory
-setwd("~/Documents/molb7910-master/")
+here()
+setwd(here())
 
 # read in dux data
-dux_data <- read_csv(file ="3-class3/data/input/data_transcript.csv")
+dux_data <- read_csv(file ="4-class4/data/input/data_transcript.csv")
 
 # remove the first column of `dux_data`
 dux_data <- dux_data[,-1]
@@ -255,12 +255,17 @@ p_final <- plot_grid(p_gene_target, p_target_gene, labels = c("A","B"), nrow = 2
 
 # Let's save some plots!
 
-save_plot(filename = "3-class3/images/target_gene_plot.png", plot = p_target_gene, base_width = 6, base_height = 4)
+save_plot(filename = here("4-class4", "images", "target_gene_plot.png"), plot = p_target_gene, base_width = 6, base_height = 4)
 
-save_plot(filename = "3-class3/images/gene_target_plot.png", plot = p_gene_target, base_width = 4, base_height = 3)
+#save_plot(filename = "4-class4/images/target_gene_plot.png", plot = p_target_gene, base_width = 6, base_height = 4)
 
+save_plot(filename = here("4-class4", "images", "gene_target_plot.png"), plot = p_gene_target, base_width = 4, base_height = 3)
 
-save_plot(filename = "3-class3/images/final_plot.png", plot = p_final, base_width = 8, base_height = 8)
+#save_plot(filename = "4-class4/images/gene_target_plot.png", plot = p_gene_target, base_width = 4, base_height = 3)
+
+save_plot(filename = here("4-class4", "images", "final_plot.png"), plot = p_final, base_width = 8, base_height = 8)
+
+#save_plot(filename = "4-class4/images/final_plot.png", plot = p_final, base_width = 8, base_height = 8)
 ```
 
 

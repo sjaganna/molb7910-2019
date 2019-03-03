@@ -11,9 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Learning goals
 
-- Review material from class 1
-- Understand the syntax of dplyr verbs and learn to use them
-- Get comfortable with cleaning and transforming data
+- Review material from class 1 & 2
+- Understand the syntax of dplyr and ggplot2
+- Get comfortable with cleaning, transforming, and plotting data
 - Use in-class time to work through issues and answer questions
 
 ## Load packages  
