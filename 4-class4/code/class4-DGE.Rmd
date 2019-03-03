@@ -140,4 +140,5 @@ foldchange <- unique(foldchange)
 
 #### References
 Youtube video on edgeR: https://www.youtube.com/watch?v=5tGCBW3_0IA  
-edgeR tutorial: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
+edgeR tutorial 1: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
+edgeR tutorial 2: https://gist.github.com/jdblischak/11384914
