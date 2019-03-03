@@ -46,10 +46,10 @@ knitr::include_graphics(here("4-class4", "images", "rnaseq-pipeline.png"), dpi =
 
 1. **Input data** as a count matrix (rownames = gene ids, colnames = sample ids)
 2. **Define grouping** of replicates. (if you have multiple replicates, you need to specify how they are organized with respect to the different samples)
-3. Combine #2 and #3 to **generate a DGElist** using `DGElist(counts=<data>, group=<grouping>)`
+3. Combine #1 and #2 to **generate a DGElist** using `DGElist(counts=<data>, group=<grouping>)`
 4. **Filter** genes with low counts using `data[keep]`
 5. **Normalize** the counts post-filtering via `calcNormFactors()`
-6. Convert #3 into an **experimental design** using `model.matrix()` for linear modeling. 
+6. Convert #2 into an **experimental design** using `model.matrix()` for linear modeling. 
 7. **Estimate dispersion** using `estimateDisp(<count-matrix>, <design>)`
 8. **Fit a generalized linear model** using `glmFit(<output-from-above>, <design>)`
 9. **Log-likelihood ratio test** using `glmLRT(<output-from-above>, coef=2)`
@@ -137,6 +137,12 @@ foldchange <- unique(foldchange)
 ```
 
 <br/>  
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```
 
 #### References
 Youtube video on edgeR: https://www.youtube.com/watch?v=5tGCBW3_0IA  

@@ -1,0 +1,63 @@
+---
+title: "class4-homework.Rmd"
+author: "Sujatha Jagannathan"
+date: "February 28, 2019"
+output: html_document
+---
+The goal of this homework is to get comfortable combining `dplyr` verbs to transform data and then to plot it using `ggplot`. 
+
+Please execute the following tasks, knit the resulting .Rmd (Lastname_class4-homework.Rmd) and submit the .html output as your assignment.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
+```
+
+#### 1. Load packages 
+Packages: `tidyverse`, `skimr`, `here`, and `ggplot2` 
+```{r, include = TRUE}
+#load packages here
+
+```
+
+#### 2. Set working directory
+```{r}
+#setwd/here
+
+```
+
+#### 3. Import data
+Path: "4-class4/data/output/data_foldchange.csv"
+```{r}
+#import data
+
+```
+
+#### 4. select, group_by, summarise, mutate and filter
+
+Goal: 
+
+Pseudocode:
+
+Actual code: 
+```{r}
+#select, group_by, summarise, mutate and filter
+
+```
+
+#### 5. ggplot
+
+Goal:
+
+Pseudocode:
+
+Actual code: 
+```{r}
+# plot
+```
+
+#### 6. Print sessionInfo {.smallest}
+
+```{r}
+#sessionInfo
+
+```
