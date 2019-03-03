@@ -250,8 +250,8 @@ $(document).ready(function () {
 <h4>6. Create the following plots to explore our data</h4>
 <p><strong>Goal</strong>:</p>
 <ol style="list-style-type: decimal">
-<li><p>M-A plot for the three time points. (M or log ratio here is<code>logFC</code>, and A or mean average here is <code>logCPM</code>)</p></li>
-<li><p>Volcano plot for the three time points. (Volcano plot is <code>logFC</code> vs. -log10 of <code>FDR</code>)</p></li>
+<li><p>M-A plot for the three time points. (M or log ratio here is<code>logFC</code>, and A or mean average here is <code>logCPM</code>). Color the points with <code>FDR &gt; 0.05</code> in grey.</p></li>
+<li><p>Volcano plot for the three time points. (Volcano plot is <code>logFC</code> vs. -log10 of <code>FDR</code>). Color the points with <code>logFC &gt; 2</code> blue and <code>logFC &lt; 2</code> red. Draw a line at <code>FDR = 0.05</code>.</p></li>
 <li><p>Heatmap of log2 ratios for the three comparisions.</p></li>
 <li><p>Remake the volcano plot highlighting the six DUX4 target genes in one color and the four nontargets in another color.</p></li>
 <li><p>Using <code>data_sub_long</code>, create line plots for the fold changes (4h, 8h, and 14h) for the six DUX4 targets and the four nontargets. Color the lines by the dux4 target status.</p></li>

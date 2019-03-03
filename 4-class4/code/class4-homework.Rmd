@@ -92,9 +92,9 @@ Sanity check: You should have a dataframe of four columns and 10 rows.
 
 **Goal**:   
 
-1. M-A plot for the three time points. (M or log ratio here is`logFC`, and A or mean average here is `logCPM`)  
+1. M-A plot for the three time points. (M or log ratio here is`logFC`, and A or mean average here is `logCPM`). Color the points with `FDR > 0.05` in grey. 
 
-2. Volcano plot for the three time points. (Volcano plot is `logFC` vs. -log10 of `FDR`)  
+2. Volcano plot for the three time points. (Volcano plot is `logFC` vs. -log10 of `FDR`). Color the points with `logFC > 2` blue and `logFC < 2` red. Draw a line at `FDR = 0.05`. 
 
 3. Heatmap of log2 ratios for the three comparisions.   
 
