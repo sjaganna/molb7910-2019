@@ -203,9 +203,9 @@ data_clusters <- tbl_df(cbind(hgnc_symbol = data$hgnc_symbol, cluster = heatmap_
 data_with_clusters <- full_join(data, data_clusters)
 
 # plotting
-ggplot(data = data_with_clusters %>% filter(cluster == 1), mapping = aes(x = logFC.timehour14, y = hl.ratio)) + geom_point()
+ggplot(data = data_with_clusters %>% filter(cluster == 1), mapping = aes(x = logFC.timehour08, y = logFC.timehour14)) + geom_point()
 
-ggplot(data = data_with_clusters %>% filter(cluster == 8), mapping = aes(x = logFC.timehour14, y = hl.ratio)) + geom_point()
+ggplot(data = data_with_clusters %>% filter(cluster == 2), mapping = aes(x = logFC.timehour08, y = logFC.timehour14)) + geom_point()
 
 data_with_clusters %>% filter(cluster == 1) %>% select(hgnc_symbol)
 data_with_clusters %>% filter(cluster == 2) %>% select(hgnc_symbol)
