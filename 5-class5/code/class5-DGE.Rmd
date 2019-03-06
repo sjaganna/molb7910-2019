@@ -1,0 +1,220 @@
+---
+title: "class5-DGE.Rmd"
+author: "Sujatha Jagannathan"
+date: "March 4, 2019"
+output: html_document
+---
+
+<br/>  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Preparing R
+Install and load packages  
+```{r, include = TRUE, warning=FALSE, message=FALSE}
+
+# Trick to install packages
+list.of.packages <- c("here",
+                      "tidyverse",
+                      "reshape2",
+                      "ggplot2",
+                      "ggthemes",
+                      "ggrepel",
+                      "scales",
+                      "viridis",
+                      "corrplot",
+                      "pheatmap", 
+                      "edgeR")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+
+if(length(new.packages)) install.packages(new.packages)
+
+library("tidyverse")
+library("here")
+library("edgeR")
+library("pheatmap")
+library("ggthemes")
+
+```
+This should install readr, tidyr, dplyr, purr, stringr, ggplot2, tibble, and forcats.
+
+Set working directory
+```{r}
+here()
+setwd(here())
+```
+
+<br/>  
+
+## Differential gene expression over a time course using edgeR    
+
+In last class, we just compared one time point to another in a simple design. Here, we are going to use all four time points in the model matrix and conduct DGE analysis. Let's get started! 
+
+<br/>  
+
+#### Importing data
+```{r}
+data_gene_level <- read_csv(here("5-class5", 
+                                      "data", 
+                                     "input",
+                                     "data_gene-level.csv"))
+
+data_proteomics <- read_csv(here("5-class5", 
+                                      "data", 
+                                     "input",
+                                     "data_proteomics.csv"))
+
+```
+
+<br/>  
+
+#### Prepare data
+```{r}
+geneExpr <- data_gene_level %>% #pipe data to next step
+                  select(-X1, -hgnc_symbol) %>% #Remove row# column and gene symbol
+                  rename(id = ensembl_gene_id) %>% #rename the ensembl_gene_id to id
+                  filter(!is.na(id)) # remove rows with no gene ids. 
+
+# Converting the tibble to a data.frame to move gene ids into rownames and generate the count matrix.  
+geneExpr <- data.frame(geneExpr) 
+row.names(geneExpr) <- geneExpr$id 
+x <- geneExpr[, c(2:13)] 
+```
+
+#### EdgeR analysis
+
+```{r}
+# 1. subset data - no need here. We are going to use all samples.   
+
+# 2. Define sample grouping  
+time <- factor( c("hour00", "hour00", "hour00", "hour04", "hour04", "hour04", "hour08", "hour08", "hour08", "hour14", "hour14", "hour14"))
+
+# 3. Generate a DGE list  
+d <- DGEList(counts=x, group = time)
+
+# 4. Filter genes with low counts (require >1 cpm in at least 1/2 of the samples)  
+keep <- rowSums(cpm(d)>1) >= 3 
+d <- d[keep, , keep.lib.sizes=FALSE] 
+
+# 5. Calculate normalization factors to scale the raw library sizes.  
+d <- calcNormFactors(d)
+
+# 6. create a model matrix to allow linear modeling  
+design <- model.matrix(~time)
+
+# 7. estimate dispersion  
+d <- estimateDisp(d, design)
+
+# 8. Fit a generalized linear model  
+d1 <- glmFit(d, design)
+
+# 9. Conduct Tagwise likelihood ratio tests for DGEGLM  
+d2 <- glmLRT(d1, coef=2:4)
+
+# 10. Extract the most differentially expressed genes.
+DUX4 <- topTags(d2, n=10733) 
+#DUX4 <- topTags(d2, n = Inf)
+#DUX4 <- topTags(d2, n=500) 
+```
+
+<br/>  
+
+#### Data clean up and export
+```{r}
+foldchange <- cbind(id = row.names(DUX4$table), DUX4$table)
+foldchange <- left_join(data_gene_level, foldchange, by = c("ensembl_gene_id" = "id"))
+foldchange <- unique(foldchange)
+```
+
+<br/>  
+
+#### Heatmap
+```{r}
+
+#input proteomics data
+data_proteomics <- data_proteomics[, 2:4]
+
+# combine RNA-seq and proteomics data
+data <- foldchange[, c(3, 16:18)]
+data <- data[complete.cases(data), ]
+data <- left_join(data, data_proteomics, by = c("hgnc_symbol" = "geneid"))
+data <- data[, c(1:5)]
+data <- data %>% filter(hl.ratio != "NA")
+data$hl.ratio <- as.numeric(as.character(data$hl.ratio))
+data <- unique(data)
+
+# clustering the data using pheatmap
+heatmap_clusters <- pheatmap(mat = data[,2:4], kmeans_k = 3) # notice the clusters corresponding to increased or decreased expression over time. This is a way to generate hypotheses to test. 
+
+heatmap_clusters <- pheatmap(mat = data[,2:4], kmeans_k = 10) # the number of clusters we pick determines how much we under or overfit the data to form clusters. 
+
+# Another issue is that with this many clusters, doing the clustering just once does not converge into a single set of centers. 
+heatmap_clusters1 <- pheatmap(mat = data[,2:4], kmeans_k = 10)
+heatmap_clusters2 <- pheatmap(mat = data[,2:4], kmeans_k = 10)
+heatmap_clusters3 <- pheatmap(mat = data[,2:4], kmeans_k = 10)
+heatmap_clusters4 <- pheatmap(mat = data[,2:4], kmeans_k = 10)
+
+heatmap_clusters$kmeans$centers # find the mean values or centers of the different clusters
+heatmap_clusters1$kmeans$centers
+heatmap_clusters2$kmeans$centers
+heatmap_clusters3$kmeans$centers
+heatmap_clusters4$kmeans$centers
+
+# How could you get kmeans to converge? You could calcualte it iteratively. 
+kmm <- kmeans(data[,2:4], 10, nstart = 50, iter.max = 15)
+kmm$centers
+
+# finding the number of clusters using the "elbow" method
+set.seed(123)
+k.max <- 15
+
+data_rna <- data[, 2:4]
+wss <- sapply(1:k.max,
+function(k){kmeans(data_rna, k, nstart=50,iter.max = 15 )$tot.withinss})
+
+plot(1:k.max, wss,
+type="b", pch = 19, frame = FALSE,
+xlab="Number of clusters K",
+ylab="Total within-clusters sum of squares")
+
+# what happens if you increase the complexity of the data you are clustering? you need more clusters! 
+data_protein <- data[, 2:5]
+wss <- sapply(1:k.max,
+function(k){kmeans(data_protein, k, nstart=50,iter.max = 15 )$tot.withinss})
+wss
+plot(1:k.max, wss,
+type="b", pch = 19, frame = FALSE,
+xlab="Number of clusters K",
+ylab="Total within-clusters sum of squares")
+
+# exploring the clusters and exporting gene names to conduct GO analysis. 
+
+heatmap_clusters <- pheatmap(mat = data[,2:4], kmeans_k = 6)
+
+heatmap_clusters$kmeans$cluster # find which gene is assigned to which cluster
+
+# add the cluster information to the hgnc_symbol
+data_clusters <- tbl_df(cbind(hgnc_symbol = data$hgnc_symbol, cluster = heatmap_clusters$kmeans$cluster))
+
+# join the data_clusters with fold change data to enable plotting
+data_with_clusters <- full_join(data, data_clusters)
+
+# plotting
+ggplot(data = data_with_clusters %>% filter(cluster == 1), mapping = aes(x = logFC.timehour14, y = hl.ratio)) + geom_point()
+
+ggplot(data = data_with_clusters %>% filter(cluster == 8), mapping = aes(x = logFC.timehour14, y = hl.ratio)) + geom_point()
+
+data_with_clusters %>% filter(cluster == 1) %>% select(hgnc_symbol)
+data_with_clusters %>% filter(cluster == 2) %>% select(hgnc_symbol)
+
+```
+
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```
