@@ -1,0 +1,371 @@
+---
+title: "Class 6: Genomic Analysis Pt I"
+author: "Neelanjan Mukherjee"
+date: "03/06/2019"
+output: html_document
+---
+
+
+```{r , include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+
+## Background info
+
+#### ELAVL1 or HuR is an essential RNA-binding protein (RBPs).
+It binds to AU-rich elements (ARE) in 3' UTRs of mRNAs. This results in stabilization of the target mRNA. See below for a model for how multiple RBPs bind to the TNF mRNA ARE to control its stability.
+
+
+```{r hur info, echo=F, fig.align='center'}
+knitr::include_graphics("../images/hur_mechanism.png", dpi = 200)
+```
+
+
+#### PAR-CLIP is method to map RBP-RNA interaction sites. 
+As described below, 4sU-labeled transcripts are crosslinked to RBPs and partially digested RNA-protein complexes are immunopurified and size-fractionated. RNA molecules are recovered, converted to a cDNA library and sequenced.
+ 
+
+```{r parclip, echo=F, fig.align='center'}
+knitr::include_graphics("../images/CLIPseq.png", dpi = 200)
+```
+
+## Hypothesis: 
+## *HuR binds to AU-rich elements in the 3' UTR of mRNAs to promote stability.*
+
+Below are specific questions that test this model:
+
+### A. Examine types of HuR binding site
+#### Where does HuR bind?
+#### Which regions are enriched for HuR binding?
+
+### B. Examine HuR binding sequence specificity
+#### What sequences does HuR bind to?
+#### Are those sequences enriched for HuR binding compared to background?    
+
+### C. How does HuR binding relate to target RNA stability
+#### Does HuR promote the stability of its mRNA targets?
+#### Does the region HuR bind to influence stabilization?
+#### Does the number of HuR binding sites per target influence stabilization?    
+
+
+```{r setup,echo=FALSE, message=FALSE}
+# set your working directory
+setwd("~/Documents/molb7910-master/6-class6/")
+
+# We need to load all the libraries needed for this exercise.
+#library(here) # setting wdir
+library(tidyverse) # data-warngling
+library(reshape2) # converting data from wide-to-long and long-to-wide
+library(ggplot2) # plotting
+library(ggthemes) # pretty plotting themes
+library(scales) # nice annotating of x/y axes in plots
+
+# BiocManager::install("seqLogo", version = "3.8")
+# BiocManager::install("BSgenome.Hsapiens.UCSC.hg19", version = "3.8")
+library(GenomicFeatures)
+library(rtracklayer)
+library(AnnotationDbi)
+library(Biostrings)
+library(seqLogo)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(DT)
+library(Hmisc) # cut2
+
+```
+
+
+
+### A. Examine HuR binding site patterns
+#### Where does HuR bind?
+
+For the purpose of this exercise we will be focus on mRNAs to keep it simple.
+
+```{r hur binding data}
+
+# read in HuR binding sites
+hur_parclip <- read_tsv("data/input/SRR248532_clusters.tsv.zip")
+
+# we are going to modify 5'utr and 3'utr to make things easier
+hur_parclip$Aligned.to <- gsub("5'utr", "utr5", hur_parclip$Aligned.to)
+hur_parclip$Aligned.to <- gsub("3'utr", "utr3", hur_parclip$Aligned.to)
+
+# let's look at the annotation categories that HuR binds to
+binding_regions_all <- hur_parclip %>% 
+  count(Aligned.to) %>%
+  arrange(desc(n)) %>%
+  mutate(freq=n/sum(n))
+binding_regions_all
+# I hate pie charts - they may be the single worst way to convey information
+pie(x = binding_regions_all$n, labels = binding_regions_all$Aligned.to)
+
+barplot(binding_regions_all$n, names.arg = binding_regions_all$Aligned.to, las=2)
+
+barplot(binding_regions_all$n, names.arg = binding_regions_all$Aligned.to, las=2, log = "y")
+
+
+# that is a lot so we will limit analysis to binding sites in mRNA
+# so we are going to create a list of the
+# annotation  regions of interest
+
+
+
+
+
+mRNA_regions <- c("utr5","coding","intron", "utr3")
+
+
+hur_parclip %>% 
+  filter(Aligned.to %in% mRNA_regions) %>%
+  count(Aligned.to) %>% 
+  summarise(fraction_mRNA=sum(n)/nrow(hur_parclip))
+
+# we are excluding ~26% of the binding sites by restricting to mRNA
+# most of those are unannotated
+
+hur_parclip_mRNA <- hur_parclip %>% 
+  filter(Aligned.to %in% mRNA_regions) 
+
+binding_regions_mRNA <- hur_parclip_mRNA %>%
+  count(Aligned.to) %>%
+  arrange(desc(n)) %>%
+  mutate(freq=n/sum(n))
+
+barplot(binding_regions_mRNA$freq, names.arg = binding_regions_mRNA$Aligned.to, las=2)
+
+intron_utr_hursites <- binding_regions_mRNA[1,2]/binding_regions_mRNA[2,2]
+
+intron_utr_hursites <- round(intron_utr_hursites, digits = 2)
+
+
+```
+
+The majority of HuR binding sites are in introns and 3' UTRs. About 3/4 of HuR binding sites are in introns and 1/4 in 3' UTRs.
+
+
+#### Which regions are enriched for HuR binding?
+
+There are `r intron_utr_hursites`x more binding sites in intron vs 3' UTR. This would suggest that HuR preferentially binds to introns. However introns are much longer than 3' UTRs. So if the average intron is 3x longer than the average 3'UTR - then HuR would exhibit simialr binding preference. We need to figure the length of introns and 3' UTRs. In order to do this we need a couple things. 
+
+  * We will need gene/transcript models. This information is available in GFF/GTF files. We will use one from [GENCODE](https://www.gencodegenes.org/human/release_19.html).
+  * We need the human genome.
+
+```{r introns 3utrs}
+
+
+
+if (!file.exists("data/accessories/gencodev19.sqlite")) {
+  df <- read.csv2(f, TRUE, stringsAsFactors=FALSE)
+
+  txdb <- makeTxDbFromGFF("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz", format="gtf")
+
+  saveDb(txdb,file="data/accessories/gencodev19.sqlite")
+}
+
+# load the gencode v19 txdb
+txdb <- loadDb("data/accessories/gencodev19.sqlite") 
+
+introns <- intronsByTranscript(txdb)
+introns <- reduce(unlist(introns))
+
+
+utr3  <- threeUTRsByTranscript(txdb)
+
+utr3 <- reduce(unlist(utr3))
+
+
+summary(width(utr3))
+summary(width(introns))
+
+intron_utr3_median <- median(width(introns)) / median(width(utr3))
+intron_utr3_median <- round(intron_utr3_median, digits = 2)
+
+intron_utr3_sum <- sum(width(introns))/sum(width(utr3))
+intron_utr3_sum <- round(intron_utr3_sum, digits = 1)
+
+
+```
+
+
+The median intron length is `r intron_utr3_median`x longer than median 3' UTR length. Therefore, based on median region length HuR is `r round(intron_utr3_median/intron_utr_hursites)`x more likely to bind in 3' UTRs than introns.
+
+There is `r intron_utr3_sum`x more intronic nucleotides than 3' UTR nucleotides. Therefore, based on total region length HuR is `r round(intron_utr3_sum/intron_utr_hursites)`x more likely to bind in 3' UTRs than introns.
+
+### B. Examine HuR binding sequence specificity
+#### What sequences does HuR bind to?
+
+```{r hur binding sequence}
+
+
+hur_string <- DNAStringSet(hur_parclip_mRNA$ClusterSequence)
+names(hur_string) <- hur_parclip_mRNA$Aligned.to
+
+boxplot(width(hur_string))
+
+hur_6mer <- data.frame(
+  count=oligonucleotideFrequency(x = unlist(hur_string), width = 6)
+  )
+
+hur_6mer$nuc <- rownames(hur_6mer)
+hur_6mer$freq <- hur_6mer$count/sum(hur_6mer$count)
+hur_6mer$freq_rand <- hur_6mer$freq/(1/4096)
+hur_6mer <- hur_6mer %>% arrange(desc(count))
+
+
+boxplot(hur_6mer$freq)
+boxplot(hur_6mer$freq_rand)
+good6mers <- hur_6mer %>% filter(freq_rand > 20)
+
+
+hur_string_20 <- DNAStringSet(hur_string, end=20) # only keeping the first 20 nucleotides
+
+letter_counts <- consensusMatrix(hur_string_20)
+probs <- prop.table(letter_counts[1:4,], 2)
+
+seqLogo(probs, ic.scale = F)
+
+
+
+```
+
+So we now know that HuR really likes TTTTTT, which is really UUUUUU - perhaps even better than it likes AUUUUA.  `r datatable(hur_6mer, filter = 'top', options = list(pageLength = 5, autoWidth = TRUE))`
+
+But we need to normalize for the frequency of these sequences in 3' UTRs and introns. For this task we need to retrieve the sequences for introns and 3' UTRs.
+
+#### Are those sequences enriched for HuR binding compared to background?    
+
+```{r 3utr seqs}
+
+# let's get 3' UTR sequences
+threeUTR_seqs <- getSeq(BSgenome.Hsapiens.UCSC.hg19, utr3)
+
+threeUTR_seqs <- DNAStringSet(unlist(threeUTR_seqs))
+
+hur_string_utr3 <- hur_string[names(hur_string) == "utr3"]
+
+
+utr3_6mer <- data.frame(
+  countHuR=oligonucleotideFrequency(x = unlist(hur_string_utr3), width = 6, as.prob = T),
+  countUTRs=oligonucleotideFrequency(x = unlist(threeUTR_seqs), width = 6, as.prob = T)
+  )
+
+utr3_6mer$k <- rownames(utr3_6mer)
+utr3_6mer$utr_pref <- utr3_6mer$countHuR - utr3_6mer$countUTRs
+utr3_6mer$utr_pref_fold <- utr3_6mer$countHuR/utr3_6mer$countUTRs
+utr3_6mer <- utr3_6mer %>% arrange(desc(utr_pref))
+
+boxplot(utr3_6mer$utr_pref)
+
+  
+
+ggplot(data = utr3_6mer, aes(y = countHuR, x = countUTRs)) +
+  geom_point(color = ifelse(utr3_6mer$utr_pref > .005, "red", "black")) +
+  theme_few() +
+  geom_abline(intercept = 0, slope = 1) +
+  geom_text(aes(label=ifelse(utr3_6mer$utr_pref > .005, 
+                             utr3_6mer$k,
+                             "")
+                )
+            ,hjust=1,vjust=-1.5)
+
+
+```
+
+In this analysis we focuesed on HuR binding sites in 3' UTRs. We asked which 6mers were most enriched in the HuR 3' UTR binding sites compared to the 6mer frequency in all 3' UTRs. We again found U-rich stetches separated by A and C appear to be preferrentially enriched by HuR. 
+`r datatable(utr3_6mer, filter = 'top', options = list(pageLength = 5, autoWidth = TRUE))`
+
+
+## For homework determine which 6mers are detected at a higher frequency in intronic HuR binding sites compared to their frequency in introns.
+
+### C. How does HuR binding relate to target RNA stability
+#### Does HuR promote the stability of its mRNA targets?
+
+One common way to visualize differences in the distribution of a variable based on category os a [cdf plot](https://ggplot2.tidyverse.org/reference/stat_ecdf.html). Often the x-axis is the log-fold change upon knockdown/overexpresion of protein and we want to see show different sets of genes behave in this context. You will be asked to make cdf plots comparing HuR knockdown accross dofferent catgories.
+
+
+```{r hur target stability}
+
+load("data/input/HuR.R") # read in HuR knockdown data
+
+hur_sirna <- HuR[rowSums(HuR) > 4,] # filter low expression
+
+hur_sirna$Gene <- rownames(hur_sirna)
+
+
+geneInfo <- read_csv("data/input/geneInfo.csv.zip")[,c(2,11)] # gene id mapping
+
+hur_siRNA <- right_join(geneInfo, hur_sirna)
+
+
+
+hur_mRNA <- hur_parclip_mRNA %>%
+  count(GeneName,Aligned.to) %>%
+  spread(Aligned.to,n) %>% 
+  arrange(desc(utr3))
+
+hur_mRNA[is.na(hur_mRNA)] <- 0 # replace these NA values with zeroes
+
+hur_mRNA$total <- rowSums(hur_mRNA[,2:5])
+hur_mRNA$target <- rep("target",nrow(hur_mRNA))
+colnames(hur_mRNA)[1] <- "Symbol"
+
+hur_sirna_binding <- left_join( hur_siRNA, hur_mRNA, by = "Symbol")[,-1]
+colnames(hur_sirna_binding)[1] <- "Gene"
+
+hur_sirna_binding$target[is.na(hur_sirna_binding$target)] <- "not_target"
+
+hur_sirna_binding <- hur_sirna_binding[!is.na(hur_sirna_binding$Gene),]
+
+ggplot(hur_sirna_binding, aes(x = log2(Mature_siGFP+1) - log2(Mature_siHuR+1), color = target)) +
+  stat_ecdf() +
+  theme_few() +
+  xlim(-2,2) +
+  ggtitle("HuR knockdown: mature mRNA") 
+
+ggplot(hur_sirna_binding, aes(x = log2(Primary_siGFP+1) - log2(Primary_siHuR+1), color = target)) +
+  stat_ecdf() +
+  theme_few() +
+  xlim(-2,2) +
+  ggtitle("HuR knockdown: precursor mRNA")
+
+
+```
+
+
+#### Does the region HuR bind to influence stabilization?
+
+```{r region stabilization}
+
+# make a new column that indicates whether a gene has a 3' UTR, intron, 3' UTR intron or other combination site
+
+# use this column to make a cdf plot
+
+```
+
+#### Does the number of HuR binding sites per target influence stabilization?    
+
+```{r number sites stabilization}
+
+hur_sirna_binding$intron_bin <- cut2(x = hur_sirna_binding$intron, g = 4 )  
+levels(hur_sirna_binding$intron_bin)
+hur_sirna_binding$intron_bin <- recode_factor(hur_sirna_binding$intron_bin,
+              "[0,  2)" = "0-2",
+              "[2,  4)" = "2-4",
+              "[4,  9)" = "4-9",
+              "[9,266]" = "9+"
+              )
+
+# now make the same cdf plot as above except for color by 'intron_bin'
+
+# does this relationship hold true for 3' UTRs?
+
+```
+
+Finally, we will __always__ end our Rmarkdown documents with the sessing information:
+
+```{r}
+sessionInfo()
+```
+
+

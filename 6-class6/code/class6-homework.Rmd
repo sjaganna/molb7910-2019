@@ -1,0 +1,92 @@
+---
+title: "Homework Class 6"
+author: "Neelanjan Mukherjee"
+date: "03/06/2019"
+output: html_document
+---
+<br/>
+
+The goal of this homework is to perform analysis of genomic data. 
+
+Please execute the following tasks, knit the resulting .Rmd (Lastname_class4-homework.Rmd) and submit the .html output as your assignment.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE)
+```
+
+<br/>
+
+#### Load packages 
+
+```{r, include = TRUE}
+#load packages here
+
+```
+
+<br/>
+
+#### Set working directory
+```{r}
+#setwd/here
+
+```
+
+## Provide answers for the questions below.
+
+<br/>
+
+### Examine HuR binding sequence specificity
+#### What sequences does HuR preferentially bind to in introns vs intronic background?
+
+Perform the same analysis on introns that was performed in 3' UTRs in class.
+
+
+```{r intron seqs}
+
+# get intron sequences
+# get  sequences of hur binding sites in introns
+# count 6 mer frequencies in both
+# plot the difference in 6mer freq between intronic hur bound seqs and intron seqs
+# name top 3 enriched 6mers
+
+
+```
+
+
+
+### How does HuR binding relate to target RNA stability
+#### Does the region HuR bind to influence stabilization?
+
+```{r region stabilization}
+
+# make a new column that indicates whether a gene has a 3' UTR, intron, 3' UTR intron or other combination site
+
+# use this column to make a cdf plot
+
+```
+
+#### Does the number of HuR binding sites per target influence stabilization?    
+
+```{r number sites stabilization}
+
+# hur_sirna_binding$intron_bin <- cut2(x = hur_sirna_binding$intron, g = 4 )  
+# levels(hur_sirna_binding$intron_bin)
+# hur_sirna_binding$intron_bin <- recode_factor(hur_sirna_binding$intron_bin,
+#               "[0,  2)" = "0-2",
+#               "[2,  4)" = "2-4",
+#               "[4,  9)" = "4-9",
+#               "[9,266]" = "9+"
+#               )
+
+# now make the same cdf plot as above except for color by 'intron_bin'
+
+# does this relationship hold true for 3' UTRs? does the number of 3' UTR binding sites influence the degree of stabilization?
+
+```
+
+#### Session info
+Finally, we will __always__ end our Rmarkdown documents with the sessing information:
+
+```{r}
+# session info
+```
