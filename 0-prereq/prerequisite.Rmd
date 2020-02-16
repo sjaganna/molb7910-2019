@@ -1,7 +1,7 @@
 ---
 title: "PreRequisite"
 author: "Sujatha Jagannathan"
-date: "February 6, 2019"
+date: "February 17, 2020"
 output: html_document
 ---
 
@@ -10,7 +10,7 @@ The goal of this pre-class assignment is to make sure that you:
 
 A) Install R
 B) Install Rstudio
-C) Install `tidyverse`, `rmarkdown`, and `here` packages 
+C) Install `tidyverse`, and `rmarkdown` packages 
 D) Create a new Rmarkdown document (lastname-prereq.rmd) - more about this later
 E) Knit the .Rmd document and submit the resulting .html file as your pre-class assignment
 
@@ -38,7 +38,6 @@ r["CRAN"] = "http://cran.us.r-project.org"
 options(repos = r)
 install.packages("tidyverse")
 install.packages("rmarkdown")
-install.packages("here")
 ```
   
 #### D) Create a new Rmarkdown document (lastname-prereq.rmd) 
